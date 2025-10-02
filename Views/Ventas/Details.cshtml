@@ -1,0 +1,85 @@
+﻿@model SWebEnergia.Models.Venta
+
+@{
+    ViewData["Title"] = "Detalles de Venta";
+}
+
+<div class="card p-4">
+    <h4 class="mb-4"><i class="fa-solid fa-file-invoice"></i> Detalles de Venta #@Model.IdVenta</h4>
+
+    <dl class="row">
+        <dt class="col-sm-2">Cliente</dt>
+        <dd class="col-sm-10">@Model.IdClienteNavigation?.Nombre</dd>
+
+        <dt class="col-sm-2">Mantenimiento</dt>
+        <dd class="col-sm-10">
+            @if (Model.IdMantenimientoNavigation != null)
+            {
+                // Añade una verificación de nulidad para SistemaRenovable
+                if (Model.IdMantenimientoNavigation.SistemaRenovable != null)
+                {
+                    @:<span>@Model.IdMantenimientoNavigation.SistemaRenovable.Descripcion</span> -
+                    @:<span>@(Model.IdMantenimientoNavigation.FechaProgramada?.ToString("dd/MM/yyyy") ?? "Sin fecha")</span>
+                }
+                else
+                {
+                    @:<span>Mantenimiento sin sistema asociado</span>
+                }
+            }
+            else
+            {
+                @:<span>Sin mantenimiento asociado</span>
+            }
+        </dd>
+
+        <dt class="col-sm-2">Subtotal</dt>
+        <dd class="col-sm-10">@(Model.Subtotal?.ToString("C") ?? "N/A")</dd>
+
+        <dt class="col-sm-2">Impuestos</dt>
+        <dd class="col-sm-10">@(Model.Impuestos?.ToString("C") ?? "N/A")</dd>
+
+        <dt class="col-sm-2">Total</dt>
+        <dd class="col-sm-10">@(Model.Total?.ToString("C") ?? "N/A")</dd>
+
+        <dt class="col-sm-2">Fecha</dt>
+        <dd class="col-sm-10">@Model.Fecha?.ToString("dd/MM/yyyy")</dd>
+    </dl>
+</div>
+
+<hr class="my-4" />
+
+@if (Model.DetalleVenta != null && Model.DetalleVenta.Any())
+{
+    <div class="card p-4 mt-4">
+        <h5 class="mb-3"><i class="fa-solid fa-list-check"></i> Productos de la Venta</h5>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio Unitario</th>
+                    <th>Importe</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var detalle in Model.DetalleVenta)
+                {
+                    <tr>
+                        <td>@detalle.IdProductoNavigation?.Nombre</td>
+                        <td>@detalle.Cantidad</td>
+                        <td>@(detalle.PrecioUnitario.ToString("C"))</td>
+                        <td>@(detalle.Importe?.ToString("C") ?? "N/A")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <p>No hay productos registrados para esta venta.</p>
+}
+
+<div class="mt-4">
+    <a asp-action="Index" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Volver a la lista</a>
+</div>

@@ -1,0 +1,141 @@
+﻿@model SWebEnergia.Models.ViewModels.ReporteGeneralViewModel
+
+@{
+    ViewData["Title"] = "Reporte General"; // Cambié a "General" para reflejar Ventas y Mantenimientos
+}
+
+<div class="card p-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mb-0"><i class="fa-solid fa-chart-line"></i> Reporte General</h4>
+    </div>
+
+    <form method="get" class="row g-2 mb-3 align-items-end">
+        <div class="col-md-3">
+            <label class="form-label">Cliente</label>
+            <input type="text" name="cliente" class="form-control" value="@Context.Request.Query["cliente"]" placeholder="Buscar por cliente" />
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Desde</label>
+            <input type="date" name="desde" class="form-control" value="@Context.Request.Query["desde"]" />
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Hasta</label>
+            <input type="date" name="hasta" class="form-control" value="@Context.Request.Query["hasta"]" />
+        </div>
+        <div class="col-md-2 d-grid">
+            <button type="submit" class="btn btn-outline-secondary w-100">
+                <i class="fa-solid fa-magnifying-glass"></i> Buscar
+            </button>
+        </div>
+        <div class="col-md-2 d-grid">
+            <a href="@Url.Action("Index")" class="btn btn-outline-dark w-100">
+                <i class="fa-solid fa-rotate"></i> Limpiar
+            </a>
+        </div>
+    </form>
+
+    <div class="mb-3 d-flex gap-2">
+        @* Botones de Exportar Ventas *@
+        <a asp-controller="Reportes" asp-action="ExportarExcel"
+           asp-route-cliente="@Context.Request.Query["cliente"]"
+           asp-route-desde="@Context.Request.Query["desde"]"
+           asp-route-hasta="@Context.Request.Query["hasta"]"
+           class="btn btn-success">
+            <i class="fa fa-file-excel"></i> Exportar Ventas Excel
+        </a>
+
+        <a asp-controller="Reportes" asp-action="ExportarPDF"
+           asp-route-cliente="@Context.Request.Query["cliente"]"
+           asp-route-desde="@Context.Request.Query["desde"]"
+           asp-route-hasta="@Context.Request.Query["hasta"]"
+           class="btn btn-danger">
+            <i class="fa fa-file-pdf"></i> Exportar Ventas PDF
+        </a>
+
+        @* Botones de Exportar Mantenimientos (Nuevos) *@
+        <a asp-controller="Reportes" asp-action="ExportarExcelMantenimientos"
+           asp-route-cliente="@Context.Request.Query["cliente"]"
+           asp-route-desde="@Context.Request.Query["desde"]"
+           asp-route-hasta="@Context.Request.Query["hasta"]"
+           class="btn btn-success">
+            <i class="fa fa-file-excel"></i> Exportar Mant. Excel
+        </a>
+
+        <a asp-controller="Reportes" asp-action="ExportarPDFMantenimientos"
+           asp-route-cliente="@Context.Request.Query["cliente"]"
+           asp-route-desde="@Context.Request.Query["desde"]"
+           asp-route-hasta="@Context.Request.Query["hasta"]"
+           class="btn btn-danger">
+            <i class="fa fa-file-pdf"></i> Exportar Mant. PDF
+        </a>
+    </div>
+
+
+    <hr />
+
+
+    <h5>Ventas</h5>
+    <table class="table table-hover align-middle">
+        <thead>
+            <tr>
+                <th>Cliente</th>
+                <th>Subtotal</th>
+                <th>Impuestos</th>
+                <th>Total</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var reporte in Model.ReportesVentas)
+            {
+                <tr>
+                    <td>@reporte.NombreCliente</td>
+                    <td>@((reporte.Subtotal ?? 0).ToString("C"))</td>
+                    <td>@((reporte.Impuestos ?? 0).ToString("C"))</td>
+                    <td>@((reporte.Total ?? 0).ToString("C"))</td>
+                    <td>@reporte.FechaVenta.ToString("dd/MM/yyyy")</td>
+                    <td>
+                        <a asp-controller="Ventas" asp-action="Details" asp-route-id="@reporte.IdVenta" class="btn btn-sm btn-outline-info">
+                            <i class="fa fa-eye"></i> Ver Detalle
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+    <hr />
+
+
+    <h5>Mantenimientos</h5>
+    <table class="table table-hover align-middle">
+        <thead>
+            <tr>
+                <th>Cliente</th>
+                <th>Tipo de Mantenimiento</th>
+                <th>Fecha</th>
+                <th>Costo Total</th>
+                <th>Acciones</th> @* Nueva columna Acciones *@
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var mantenimiento in Model.ReportesMantenimientos)
+            {
+                <tr>
+                    <td>@mantenimiento.NombreCliente</td>
+                    <td>@mantenimiento.TipoMantenimiento</td>
+                    <td>@mantenimiento.Fecha.ToString("dd/MM/yyyy")</td>
+                    <td>@((mantenimiento.CostoTotal ?? 0).ToString("C"))</td>
+                    <td>
+                        @* Botón Ver Detalle para Mantenimientos (Nuevo) *@
+                        <a asp-controller="Mantenimientos" asp-action="Details" asp-route-id="@mantenimiento.IdMantenimiento" class="btn btn-sm btn-outline-info">
+                            <i class="fa fa-eye"></i> Ver Detalle
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

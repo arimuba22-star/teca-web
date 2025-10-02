@@ -1,0 +1,122 @@
+﻿@model IEnumerable<SWebEnergia.Models.Venta>
+
+@{
+    ViewData["Title"] = "Ventas";
+    var q = ViewData["CurrentFilter"] as string;
+}
+
+<div class="card p-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mb-0"><i class="fa-solid fa-receipt"></i> Ventas</h4>
+        <a class="btn btn-primary" asp-action="Create"><i class="fa-solid fa-plus"></i> Nueva Venta</a>
+    </div>
+
+    @if (TempData["Ok"] != null)
+    {
+        <div class="alert alert-success">@TempData["Ok"]</div>
+    }
+
+    <form method="get" class="row g-2 mb-3">
+        <div class="col-md-3">
+            <input name="q" value="@q" class="form-control" placeholder="Buscar por cliente" />
+        </div>
+        <div class="col-md-2">
+            <input type="date" name="fechaDesde" value="@(ViewData["FechaDesde"] ?? "")" class="form-control" />
+        </div>
+        <div class="col-md-2">
+            <input type="date" name="fechaHasta" value="@(ViewData["FechaHasta"] ?? "")" class="form-control" />
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-outline-secondary w-100"><i class="fa-solid fa-magnifying-glass"></i> Buscar</button>
+        </div>
+        <div class="col-md-2">
+            <a class="btn btn-outline-dark w-100" asp-action="Index"><i class="fa-solid fa-rotate"></i> Limpiar</a>
+        </div>
+    </form>
+
+
+    @if (Model == null)
+    {
+        <div class="alert alert-danger">⚠️ El modelo llegó como null</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Subtotal</th>
+                        <th>Impuestos</th>
+                        <th>Total</th>
+                        <th>Fecha</th>
+                        <th style="width:140px;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var venta in Model)
+                    {
+                        <tr>
+                            <td>@venta.IdClienteNavigation?.Nombre</td>
+                            <td>@(venta.Subtotal?.ToString("C") ?? "N/A")</td>
+                            <td>@(venta.Impuestos?.ToString("C") ?? "N/A")</td>
+                            <td>@(venta.Total?.ToString("C") ?? "N/A")</td>
+                            <td>@venta.Fecha?.ToString("dd/MM/yyyy")</td>
+                            <td class="text-end">
+                                <a class="btn btn-sm btn-outline-secondary" asp-action="Details" asp-route-id="@venta.IdVenta"><i class="fa-solid fa-eye"></i></a>
+                                <a class="btn btn-sm btn-outline-primary" asp-action="Edit" asp-route-id="@venta.IdVenta"><i class="fa-solid fa-pen"></i></a>
+                                <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@venta.IdVenta"><i class="fa-solid fa-trash"></i></a>
+
+                                <a href="javascript:void(0);" onclick="mostrarVistaPreviaVenta(@venta.IdVenta)" class="btn btn-sm btn-outline-info" title="Comprobante de Venta">
+                                    <i class="fa-solid fa-file-invoice"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+<div class="modal fade" id="modalVistaPrevia" tabindex="-1" aria-labelledby="modalVistaPreviaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable" style="max-width: 90vw; height: 90vh;">
+        <div class="modal-content" style="height: 90vh;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalVistaPreviaLabel">Vista Previa del Comprobante de Venta</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body p-0" style="height: calc(100% - 120px);">
+                <iframe id="iframePdfPreview" style="width: 100%; height: 100%;" frameborder="0"></iframe>
+            </div>
+            <div class="modal-footer">
+                <a id="btnDescargarPdf" href="#" class="btn btn-primary" target="_blank">
+                    <i class="fa-solid fa-download"></i> Descargar PDF
+                </a>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i> Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Función para mostrar la vista previa del PDF de la venta
+        function mostrarVistaPreviaVenta(idVenta) {
+            // URL para la vista previa del PDF (acción en línea)
+            const pdfUrl = '/Ventas/VistaPreviaPdf/' + idVenta;
+            // URL para la descarga del PDF (acción de descarga)
+            const downloadUrl = '/Ventas/GenerarPdf/' + idVenta;
+
+            // Establece la URL del iframe y el enlace de descarga
+            document.getElementById('iframePdfPreview').src = pdfUrl;
+            document.getElementById('btnDescargarPdf').href = downloadUrl;
+
+            // Muestra el modal
+            const modal = new bootstrap.Modal(document.getElementById('modalVistaPrevia'));
+            modal.show();
+        }
+    </script>
+}

@@ -1,0 +1,140 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@model SWebEnergia.ViewModels.DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+    var usuario = HttpContextAccessor.HttpContext?.Session.GetString("Usuario");
+}
+
+@if (string.IsNullOrEmpty(usuario))
+{
+    <!-- MODO VISITANTE -->
+    <div class="d-flex flex-column justify-content-center align-items-center vh-100 text-center">
+        <img src="~/images/logo2-teca.png" alt="TECA" style="max-width:200px;" class="mb-4" />
+        <h1 class="fw-bold text-primary">Bienvenido a TECA</h1>
+        <p class="lead text-muted">Plataforma web para la gestión de <strong>mantenimiento y ventas</strong>.</p>
+        <a asp-controller="Account" asp-action="Login" class="btn btn-lg btn-primary mt-3">
+            <i class="fa-solid fa-right-to-bracket"></i> Iniciar Sesión
+        </a>
+    </div>
+}
+else
+{
+    <!-- MODO LOGUEADO - DASHBOARD -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card card-kpi p-3 text-white" style="background:#0d6efd">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6>Clientes</h6>
+                        <h3>@Model.TotalClientes</h3>
+                    </div>
+                    <div><i class="fa-solid fa-users fa-2x"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-kpi p-3 text-white" style="background:#198754">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6>Productos</h6>
+                        <h3>@Model.TotalProductos</h3>
+                    </div>
+                    <div><i class="fa-solid fa-boxes-stacked fa-2x"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-kpi p-3 text-white" style="background:#ffc107">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6>Ventas</h6>
+                        <h3>@Model.TotalVentas</h3>
+                    </div>
+                    <div><i class="fa-solid fa-receipt fa-2x"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-kpi p-3 text-white" style="background:#dc3545">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6>Mantenimientos</h6>
+                        <h3>@Model.TotalMantenimientos</h3>
+                    </div>
+                    <div><i class="fa-solid fa-tools fa-2x"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 mb-4">
+            <div class="card p-3">
+                <h5>Ventas — Últimos 6 meses</h5>
+                <canvas id="salesChart" height="120"></canvas>
+            </div>
+        </div>
+
+        <div class="col-lg-4 mb-4">
+            <div class="card p-3">
+                <h5>Mantenimientos — Últimos 6 meses</h5>
+                <canvas id="maintChart" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+
+    @section Scripts {
+    <script>
+        const labels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.SalesChartLabels));
+        const salesData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.SalesChartTotals));
+        const maintData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MaintenanceChartTotals));
+
+        // Ventas - Line
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Total ventas',
+                    data: salesData,
+                    tension: 0.3,
+                    fill: true,
+                    borderWidth: 2,
+                    pointRadius: 4,
+                    borderColor: '#0d6efd',
+                    backgroundColor: 'rgba(13,110,253,0.2)'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+
+        // Mantenimientos - Bar
+        const ctx2 = document.getElementById('maintChart').getContext('2d');
+        new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Mantenimientos',
+                    data: maintData,
+                    borderWidth: 1,
+                    backgroundColor: '#198754'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+    </script>
+    }
+}

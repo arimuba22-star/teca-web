@@ -1,0 +1,62 @@
+﻿@model SWebEnergia.Models.SistemasRenovable
+@{
+    ViewData["Title"] = "Detalles del Sistema";
+}
+
+<h1 class="mb-4">Detalles del Sistema Renovable</h1>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <p><strong>Cliente:</strong> @Model.IdClienteNavigation?.Nombre</p>
+        <p><strong>Tipo de Sistema:</strong> @Model.IdTipoSistemaNavigation?.Nombre</p>
+        <p><strong>Descripción:</strong> @Model.Descripcion</p>
+        <p><strong>Fecha de Instalación:</strong> @Model.FechaInstalacion.ToString("yyyy-MM-dd")</p>
+        <p><strong>Capacidad:</strong> @Model.CapacidadKw kW</p>
+        <p><strong>Estado:</strong> @Model.Estado</p>
+        <p><strong>Departamento:</strong> @Model.Departamento</p>
+        <p><strong>Provincia:</strong> @Model.Provincia</p>
+        <p><strong>Dirección Exacta:</strong> @Model.DireccionExacta</p>
+        <p><strong>Referencia:</strong> @Model.Referencia</p>
+        <p><strong>Observaciones:</strong> @Model.Observaciones</p>
+    </div>
+</div>
+
+<h4 class="mt-4">Componentes del Sistema</h4>
+
+@if (Model.Componentes != null && Model.Componentes.Any())
+{
+    <table class="table table-bordered table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Tipo de Componente</th>
+                <th>Descripción</th>
+                <th>Capacidad Energética (kW)</th>
+                <th>Fecha de Instalación</th>
+                <th>Último Mantenimiento</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var comp in Model.Componentes)
+            {
+                <tr>
+                    <td>@comp.TipoComponente?.Descripcion</td>
+                    <td>@comp.Descripcion</td>
+                    <td>@comp.CapacidadEnergetica</td>
+                    <td>@(comp.FechaInstalacion?.ToString("yyyy-MM-dd"))</td>
+                    <td>@(comp.UltimoFechaMantenimiento?.ToString("yyyy-MM-dd") ?? "N/A")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p class="text-muted">No hay componentes registrados para este sistema.</p>
+}
+
+<div class="mt-3 d-flex gap-2">
+    <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model.IdSistema">
+        <i class="fa fa-pen"></i> Editar
+    </a>
+    <a asp-action="Index" class="btn btn-secondary">Volver a la lista</a>
+</div>

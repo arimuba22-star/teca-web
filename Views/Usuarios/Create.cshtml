@@ -1,0 +1,130 @@
+﻿@model SWebEnergia.Models.Usuario
+@{
+    ViewData["Title"] = "Nuevo Usuario";
+}
+
+<div class="card p-3">
+    <h4><i class="fa-solid fa-plus"></i> Crear Nuevo Usuario</h4>
+
+    <form method="post" asp-action="Create">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <!-- Nombre -->
+        <div class="mb-3">
+            <label asp-for="Nombre" class="form-label">Nombre</label>
+            <input asp-for="Nombre" class="form-control" />
+            <span asp-validation-for="Nombre" class="text-danger"></span>
+        </div>
+
+        <!-- Email -->
+        <div class="mb-3">
+            <label asp-for="Email" class="form-label">Correo electrónico</label>
+            <input asp-for="Email" class="form-control" type="email" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="FechaNacimiento" class="form-label">Fecha de Nacimiento</label>
+            <input asp-for="FechaNacimiento" class="form-control" type="date" />
+            <span asp-validation-for="FechaNacimiento" class="text-danger"></span>
+        </div>
+
+
+        <!-- Contraseña con ojito -->
+        <div class="mb-3">
+            <label asp-for="PasswordHash" class="form-label">Contraseña base</label>
+            <div class="input-group">
+                <input asp-for="PasswordHash" class="form-control" type="password" id="PasswordHash" />
+                <button type="button" class="btn btn-outline-secondary toggle-pass" data-target="PasswordHash">
+                    <i class="fa-solid fa-eye-slash"></i>
+                </button>
+            </div>
+            <span asp-validation-for="PasswordHash" class="text-danger"></span>
+        </div>
+
+        <!-- Confirmar Contraseña con ojito -->
+        <div class="mb-3">
+            <label class="form-label">Confirmar Contraseña</label>
+            <div class="input-group">
+                <input type="password" name="ConfirmPassword" id="ConfirmPassword" class="form-control" />
+                <button type="button" class="btn btn-outline-secondary toggle-pass" data-target="ConfirmPassword">
+                    <i class="fa-solid fa-eye-slash"></i>
+                </button>
+            </div>
+            <span class="text-danger" id="confirmError"></span>
+        </div>
+
+
+
+        <!-- Activo -->
+        <div class="mb-3">
+            <label asp-for="Activo" class="form-label">Estado</label>
+            <select asp-for="Activo" class="form-select">
+                <option value="true">Activo</option>
+                <option value="false">Inactivo</option>
+            </select>
+            <span asp-validation-for="Activo" class="text-danger"></span>
+        </div>
+
+        <!-- Rol -->
+        <div class="mb-3">
+            <label asp-for="IdRol" class="form-label">Rol</label>
+            <select asp-for="IdRol" class="form-select">
+                @if (ViewBag.Roles != null && ((IEnumerable<SelectListItem>)ViewBag.Roles).Any())
+                {
+                    @foreach (var rol in (IEnumerable<SelectListItem>)ViewBag.Roles)
+                    {
+                        <option value="@rol.Value">@rol.Text</option>
+                    }
+                }
+                else
+                {
+                    <option value="">No hay roles disponibles</option>
+                }
+            </select>
+            <span asp-validation-for="IdRol" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Crear Usuario</button>
+        <a href="@Url.Action("Index", "Usuarios")" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        // Validación de confirmación de contraseña
+        document.querySelector("form").addEventListener("submit", function (e) {
+            const pass = document.getElementById("PasswordHash").value;
+            const confirm = document.getElementById("ConfirmPassword").value;
+            const errorSpan = document.getElementById("confirmError");
+
+            if (pass !== confirm) {
+                e.preventDefault();
+                errorSpan.textContent = "Las contraseñas no coinciden.";
+            } else {
+                errorSpan.textContent = "";
+            }
+        });
+
+        // Toggle mostrar/ocultar contraseña en ambos campos
+        document.querySelectorAll(".toggle-pass").forEach(btn => {
+            btn.addEventListener("click", function () {
+                const targetId = this.getAttribute("data-target");
+                const input = document.getElementById(targetId);
+                const icon = this.querySelector("i");
+
+                if (input.type === "password") {
+                    input.type = "text";
+                    icon.classList.remove("fa-eye-slash");
+                    icon.classList.add("fa-eye");
+                } else {
+                    input.type = "password";
+                    icon.classList.remove("fa-eye");
+                    icon.classList.add("fa-eye-slash");
+                }
+            });
+        });
+    </script>
+}

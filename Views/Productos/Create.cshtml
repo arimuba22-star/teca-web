@@ -1,0 +1,103 @@
+﻿@model SWebEnergia.Models.Producto
+@{
+    ViewData["Title"] = "Crear Repuesto";
+    var categorias = ViewBag.IdCategoria as SelectList;
+}
+
+<div class="card p-4">
+    <h4 class="mb-3">Nuevo Repuesto</h4>
+    <form asp-action="Create" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="mb-3">
+            <label asp-for="CodigoSku" class="form-label"></label>
+            <input asp-for="CodigoSku" class="form-control" />
+            <span asp-validation-for="CodigoSku" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Nombre" class="form-label"></label>
+            <input asp-for="Nombre" class="form-control" />
+            <span asp-validation-for="Nombre" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="IdCategoria" class="form-label"></label>
+            <select asp-for="IdCategoria" class="form-select" asp-items="categorias"></select>
+            <span asp-validation-for="IdCategoria" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Descripcion" class="form-label"></label>
+            <textarea asp-for="Descripcion" class="form-control"></textarea>
+            <span asp-validation-for="Descripcion" class="text-danger"></span>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="PrecioCompra" class="form-label"></label>
+                <input asp-for="PrecioCompra" class="form-control" />
+                <span asp-validation-for="PrecioCompra" class="text-danger"></span>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="PrecioVenta" class="form-label"></label>
+                <input asp-for="PrecioVenta" class="form-control" />
+                <span asp-validation-for="PrecioVenta" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="Stock" class="form-label"></label>
+                <input asp-for="Stock" class="form-control" />
+                <span asp-validation-for="Stock" class="text-danger"></span>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="StockMinimo" class="form-label"></label>
+                <input asp-for="StockMinimo" class="form-control" />
+                <span asp-validation-for="StockMinimo" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="UnidadMedida" class="form-label"></label>
+            <input asp-for="UnidadMedida" class="form-control" />
+            <span asp-validation-for="UnidadMedida" class="text-danger"></span>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="FrecuenciaMantenimientoRecomendado" class="form-label"></label>
+                <input asp-for="FrecuenciaMantenimientoRecomendado" class="form-control" />
+                <span asp-validation-for="FrecuenciaMantenimientoRecomendado" class="text-danger"></span>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="TiempoVidaUtil" class="form-label"></label>
+                <input asp-for="TiempoVidaUtil" class="form-control" />
+                <span asp-validation-for="TiempoVidaUtil" class="text-danger"></span>
+            </div>
+        </div>
+
+        @* <div class="mb-3">
+            <label class="form-label">Imagen del Producto</label>
+            <input type="file" name="imagen" class="form-control" />
+        </div>
+        *@
+        <div class="mb-3">
+            <label asp-for="Activo" class="form-label"></label>
+            <select asp-for="Activo" class="form-select">
+                <option value="true">Activo</option>
+                <option value="false">Inactivo</option>
+            </select>
+            <span asp-validation-for="Activo" class="text-danger"></span>
+        </div>
+
+
+        <button type="submit" class="btn btn-success">Guardar</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

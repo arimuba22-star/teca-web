@@ -1,0 +1,62 @@
+﻿@model SWebEnergia.Models.Comprobante
+
+@{
+    Layout = ViewData["DisableLayout"] as bool? == true ? null : "_Layout";
+    ViewData["Title"] = "";
+    var isPreview = ViewData["Preview"] as bool? ?? false;
+}
+
+@if (Model == null)
+{
+    <div class="alert alert-danger">
+        El comprobante no se pudo cargar.
+    </div>
+}
+else
+{
+    <h2>@ViewData["Title"]</h2>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <p><strong>Cliente:</strong> @Model.IdClienteNavigation?.Nombre</p>
+            <p><strong>Tipo:</strong> @Model.Tipo</p>
+            <p><strong>Fecha:</strong> @Model.Fecha?.ToString("dd/MM/yyyy")</p>
+            <p><strong>Subtotal:</strong> @Model.Subtotal.ToString("C")</p>
+            <p><strong>Impuestos:</strong> @Model.Impuestos.ToString("C")</p>
+            <p><strong>Total:</strong> @Model.Total.ToString("C")</p>
+        </div>
+    </div>
+
+    @if (Model.DetalleComprobantes?.Any() == true)
+    {
+        <h4>Detalle</h4>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Producto/Servicio</th>
+                    <th>Cantidad</th>
+                    <th>Precio Unitario</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var detalle in Model.DetalleComprobantes)
+                {
+                    <tr>
+                        <td>@detalle.Concepto</td>
+                        <td>@detalle.Cantidad</td>
+                        <td>@detalle.PrecioUnitario.ToString("C")</td>
+                        <td>@detalle.Importe?.ToString("C")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    @if (!(ViewData["DisableLayout"] as bool? == true))
+    {
+        <a asp-action="Index" asp-controller="Mantenimientos" class="btn btn-secondary mt-3">Volver</a>
+        <a asp-action="ComprobantePdf" asp-route-id="@Model.IdComprobante" class="btn btn-primary">Descargar PDF</a>
+    }
+
+}

@@ -1,0 +1,251 @@
+﻿@model SWebEnergia.Models.SistemasRenovable
+
+@{
+    ViewData["Title"] = "Editar Sistema Renovable";
+}
+
+<h1 class="mb-4">Editar Sistema</h1>
+
+<!-- Mensajes de alerta -->
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+@if (TempData["Ok"] != null)
+{
+    <div class="alert alert-success">@TempData["Ok"]</div>
+}
+
+<!-- Validación de modelo -->
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-warning">Revisa los campos marcados en rojo. El formulario contiene errores.</div>
+}
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="IdSistema" />
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label asp-for="IdCliente" class="form-label"></label>
+            <select asp-for="IdCliente" asp-items="ViewBag.Clientes" class="form-select"></select>
+            <span asp-validation-for="IdCliente" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label asp-for="IdTipoSistema" class="form-label"></label>
+            <select asp-for="IdTipoSistema" asp-items="ViewBag.TiposSistema" class="form-select"></select>
+            <span asp-validation-for="IdTipoSistema" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-12 mb-3">
+            <label asp-for="Descripcion" class="form-label"></label>
+            <input asp-for="Descripcion" class="form-control" />
+            <span asp-validation-for="Descripcion" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label asp-for="FechaInstalacion" class="form-label"></label>
+            <input asp-for="FechaInstalacion" class="form-control" type="date" />
+            <span asp-validation-for="FechaInstalacion" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label asp-for="CapacidadKw" class="form-label"></label>
+            <input asp-for="CapacidadKw" class="form-control" />
+            <span asp-validation-for="CapacidadKw" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label asp-for="Estado" class="form-label"></label>
+            <select asp-for="Estado" asp-items="ViewBag.Estados" class="form-select"></select>
+            <span asp-validation-for="Estado" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label asp-for="Departamento" class="form-label"></label>
+            <select asp-for="Departamento" class="form-select" id="departamento">
+                <option value="">-- Selecciona un departamento --</option>
+                @{
+                    var departamentos = new[]
+                    {
+                                "Amazonas", "Áncash", "Apurímac", "Arequipa", "Ayacucho",
+                                "Cajamarca", "Cusco", "Huancavelica", "Huánuco", "Ica",
+                                "Junín", "La Libertad", "Lambayeque", "Lima", "Callao",
+                                "Loreto", "Madre de Dios", "Moquegua", "Pasco", "Piura",
+                                "Puno", "San Martín", "Tacna", "Tumbes", "Ucayali"
+                                };
+
+                    foreach (var dept in departamentos)
+                    {
+                        <option value="@dept" selected="@(Model.Departamento == dept)">
+                            @dept
+                        </option>
+                    }
+                }
+            </select>
+            <span asp-validation-for="Departamento" class="text-danger"></span>
+        </div>
+
+
+        <div class="col-md-6 mb-3">
+            <label asp-for="Provincia" class="form-label"></label>
+            <select asp-for="Provincia" class="form-select" id="provincia">
+                <option value="">-- Selecciona una provincia --</option>
+                <!-- Las provincias se cargarán aquí vía JavaScript -->
+            </select>
+            <span asp-validation-for="Provincia" class="text-danger"></span>
+        </div>
+
+
+
+        <div class="col-md-12 mb-3">
+            <label asp-for="DireccionExacta" class="form-label"></label>
+            <input asp-for="DireccionExacta" class="form-control" />
+            <span asp-validation-for="DireccionExacta" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-12 mb-3">
+            <label asp-for="Referencia" class="form-label"></label>
+            <input asp-for="Referencia" class="form-control" />
+            <span asp-validation-for="Referencia" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-12 mb-3">
+            <label asp-for="Observaciones" class="form-label"></label>
+            <textarea asp-for="Observaciones" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="Observaciones" class="text-danger"></span>
+        </div>
+    </div>
+
+    <!-- Componentes del sistema -->
+    <h4 class="mt-4">Componentes del Sistema</h4>
+    <div id="componentes-container">
+        @if (Model.Componentes != null)
+        {
+            int index = 0;
+            foreach (var comp in Model.Componentes)
+            {
+                <div class="componente-item border p-3 mb-3 rounded bg-light">
+                    <input type="hidden" name="componentes[@index].IdComponente" value="@comp.IdComponente" />
+                    <input type="hidden" name="componentes[@index].IdSistema" value="@Model.IdSistema" />
+
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <label>Tipo Componente</label>
+                            <select name="componentes[@index].IdTipoComponente" class="form-select">
+                                @foreach (var tipo in (SelectList)ViewBag.TiposComponentes)
+                                {
+                                    <option value="@tipo.Value" selected="@(tipo.Value == comp.IdTipoComponente.ToString())">@tipo.Text</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label>Descripción</label>
+                            <input name="componentes[@index].Descripcion" class="form-control" value="@comp.Descripcion" />
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label>Capacidad Energética(kW)</label>
+                            <input name="componentes[@index].CapacidadEnergetica" type="number" step="0.01" class="form-control" value="@comp.CapacidadEnergetica" />
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label>Fecha Instalación</label>
+                            <input name="componentes[@index].FechaInstalacion" type="date" class="form-control" value="@comp.FechaInstalacion?.ToString("yyyy-MM-dd")" />
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-danger btn-sm mt-2" onclick="this.closest('.componente-item').remove()">Eliminar</button>
+                </div>
+                index++;
+            }
+        }
+    </div>
+
+    <button type="button" class="btn btn-outline-secondary mb-3" onclick="agregarComponente()">+ Agregar Componente</button>
+
+    <!-- Template para nuevos componentes -->
+    <template id="componente-template">
+        <div class="componente-item border p-3 mb-3 rounded bg-light">
+            <div class="row">
+                <div class="col-md-6 mb-2">
+                    <label>Tipo Componente</label>
+                    <select name="componentes[0].IdTipoComponente" class="form-select tipo-componente">
+                        @foreach (var tipo in (SelectList)ViewBag.TiposComponentes)
+                        {
+                            <option value="@tipo.Value">@tipo.Text</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <label>Descripción</label>
+                    <input name="componentes[0].Descripcion" class="form-control descripcion" />
+                </div>
+                <div class="col-md-6 mb-2">
+                    <label>Capacidad Energética</label>
+                    <input name="componentes[0].CapacidadEnergetica" type="number" step="0.01" class="form-control capacidad" />
+                </div>
+                <div class="col-md-6 mb-2">
+                    <label>Fecha Instalación</label>
+                    <input name="componentes[0].FechaInstalacion" type="date" class="form-control fecha-instalacion" />
+                </div>
+            </div>
+            <button type="button" class="btn btn-danger btn-sm mt-2" onclick="this.closest('.componente-item').remove()">Eliminar</button>
+        </div>
+    </template>
+
+    <div class="mt-4">
+        <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Guardar Cambios</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </div>
+</form>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        let indexComponente = @Model.Componentes?.Count() ?? 0;
+
+        function agregarComponente() {
+            const template = document.getElementById('componente-template');
+            const clone = template.content.cloneNode(true);
+
+            clone.querySelectorAll('[name]').forEach(el => {
+                el.name = el.name.replace(/\[0\]/g, `[${indexComponente}]`);
+            });
+
+            document.getElementById('componentes-container').appendChild(clone);
+            indexComponente++;
+        }
+    </script>
+    <script>
+        document.getElementById("departamento")?.addEventListener("change", function () {
+            const departamento = this.value;
+            const provinciaSelect = document.getElementById("provincia");
+
+            // Limpia opciones actuales
+            provinciaSelect.innerHTML = '<option value="">-- Selecciona una provincia --</option>';
+
+            if (departamento) {
+                fetch(`/SistemasRenovables/ObtenerProvincias?departamento=${departamento}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(function (provincia) {
+                            const opt = document.createElement("option");
+                            opt.value = provincia;
+                            opt.text = provincia;
+                            provinciaSelect.appendChild(opt);
+                        });
+
+                       
+                    });
+            }
+        });
+
+        // 🔁 Disparar cambio automáticamente si ya hay un departamento cargado (cuando entras a Edit)
+        window.addEventListener("DOMContentLoaded", function () {
+            const d = document.getElementById("departamento");
+            if (d && d.value) {
+                d.dispatchEvent(new Event("change"));
+            }
+        });
+    </script>
+}
+

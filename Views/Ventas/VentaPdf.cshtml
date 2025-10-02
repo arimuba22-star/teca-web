@@ -1,0 +1,85 @@
+﻿@model SWebEnergia.Models.Venta
+
+@{
+    Layout = null; // Esto es crucial para que el PDF se genere sin el layout principal
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Comprobante de Venta - @Model.IdVenta</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            margin: 20px;
+        }
+
+        .container {
+            width: 100%;
+        }
+
+        .header, .details, .footer {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+            .header td, .details th, .details td, .footer td {
+                padding: 8px;
+                text-align: left;
+            }
+        /* Estilos similares a tu plantilla de comprobante */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Comprobante de Venta</h2>
+        <p>Número: @Model.IdVenta</p>
+        <p>Fecha: @Model.Fecha?.ToString("dd/MM/yyyy")</p>
+
+        <br />
+
+        <div class="customer-info">
+            <h4>Datos del Cliente</h4>
+            <p><strong>Nombre:</strong> @Model.IdClienteNavigation?.Nombre</p>
+            <p><strong>Documento:</strong> @Model.IdClienteNavigation?.NDocumento</p>
+            <p><strong>Dirección:</strong> @(string.IsNullOrEmpty(Model.IdClienteNavigation?.Direccion) ? "No registrada" : Model.IdClienteNavigation?.Direccion)</p>
+        </div>
+
+        <br />
+
+        <table class="details">
+            <thead>
+                <tr>
+                    <th>Cantidad</th>
+                    <th>Descripción</th>
+                    <th>Precio Unitario</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.DetalleVenta != null)
+                {
+                    @foreach (var item in Model.DetalleVenta)
+                    {
+                        <tr>
+                            <td>@item.Cantidad</td>
+                            <td>@item.IdProductoNavigation?.Nombre</td>
+                            <td>@(item.PrecioUnitario.ToString("C"))</td>
+                            <td>@((item.Cantidad * item.PrecioUnitario).ToString("C"))</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+
+        <br />
+        <div class="summary">
+            <p><strong>Subtotal:</strong> @(Model.Subtotal?.ToString("C") ?? "N/A")</p>
+            <p><strong>Impuestos (18%):</strong> @(Model.Impuestos?.ToString("C") ?? "N/A")</p>
+            <p><strong>Total:</strong> @(Model.Total?.ToString("C") ?? "N/A")</p>
+        </div>
+    </div>
+</body>
+</html>

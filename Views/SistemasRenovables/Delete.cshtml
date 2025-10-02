@@ -1,0 +1,20 @@
+﻿@model SWebEnergia.Models.SistemasRenovable
+@{
+    ViewData["Title"] = "Eliminar Sistema Renovable";
+}
+
+<h1 class="text-danger mb-4">¿Estás seguro que deseas eliminar este sistema?</h1>
+
+<div class="mb-3">
+    <strong>Descripción:</strong> @Model.Descripcion<br />
+    <strong>Cliente:</strong> @Model.IdClienteNavigation?.Nombre<br />
+    <strong>Tipo de Sistema:</strong> @Model.IdTipoSistemaNavigation?.Nombre<br />
+    <strong>Departamento:</strong> @Model.Departamento
+</div>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="IdSistema" />
+    <button type="submit" class="btn btn-danger"><i class="fa fa-trash"></i> Eliminar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>
+

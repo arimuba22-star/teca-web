@@ -1,0 +1,83 @@
+﻿@model SWebEnergia.Models.Cliente
+@{
+    ViewData["Title"] = "Editar Cliente";
+}
+<div class="card p-3">
+    <h5 class="mb-3"><i class="fa-solid fa-pen"></i> Editar Cliente</h5>
+    <form asp-action="Edit">
+        <input type="hidden" asp-for="IdCliente" />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label asp-for="Nombre" class="form-label">Nombre/Razón Social</label>
+                <input asp-for="Nombre" class="form-control" />
+                <span asp-validation-for="Nombre" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="Telefono" class="form-label"></label>
+                <input asp-for="Telefono" class="form-control" maxlength="9" />
+                <span asp-validation-for="Telefono" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="Direccion" class="form-label"></label>
+                <input asp-for="Direccion" class="form-control" />
+                <span asp-validation-for="Direccion" class="text-danger"></span>
+            </div>
+
+            <!-- Agregar los nuevos campos -->
+            <div class="col-md-6">
+                <label asp-for="TDocumento" class="form-label">Tipo de Documento</label>
+                <select asp-for="TDocumento" class="form-control" onchange="validarTipoDocumento()">
+                    <option value="DNI">DNI</option>
+                    <option value="RUC">RUC</option>
+                    <option value="CARNET DE EXTRANJERIA">Carnet de Extranjería</option>
+                </select>
+                <span asp-validation-for="TDocumento" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="NDocumento" class="form-label">Número de Documento</label>
+                <input asp-for="NDocumento" class="form-control" id="nDocumento" />
+                <span asp-validation-for="NDocumento" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="FechaNacimiento" class="form-label">Fecha de nacimiento</label>
+                <input asp-for="FechaNacimiento" class="form-control" type="date" />
+                <span asp-validation-for="FechaNacimiento" class="text-danger"></span>
+            </div>
+
+        </div>
+
+        <div class="mt-4 d-flex gap-2">
+            <button class="btn btn-primary"><i class="fa-solid fa-check"></i> Guardar</button>
+            <a class="btn btn-secondary" asp-action="Index">Volver</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        function validarTipoDocumento() {
+            var tipoDocumento = document.querySelector('select[name="TDocumento"]').value;
+            var nDocumento = document.getElementById("nDocumento");
+
+            // Limitar la longitud de NDocumento según el tipo de documento seleccionado
+            if (tipoDocumento === "DNI") {
+                nDocumento.setAttribute("maxlength", "8"); // Limitar a 8 caracteres para DNI
+            } else if (tipoDocumento === "RUC" || tipoDocumento === "CARNET DE EXTRANJERIA") {
+                nDocumento.setAttribute("maxlength", "11"); // Limitar a 11 caracteres para RUC o Carnet de Extranjería
+            }
+        }
+
+        // Llamar a la función de validación cuando la página cargue
+        window.onload = validarTipoDocumento;
+    </script>
+}

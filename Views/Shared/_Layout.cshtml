@@ -1,0 +1,146 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    var usuario = HttpContextAccessor.HttpContext?.Session.GetString("Usuario");
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+
+    bool esLogin = currentController == "Account" && currentAction == "Login";
+    bool haySesion = !string.IsNullOrEmpty(usuario);
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Plataforma Web TECA</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- FontAwesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .app-wrapper {
+            display: flex;
+            min-height: calc(100vh - 56px);
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #8B0000;
+            color: white;
+            padding-top: 1rem;
+            flex-shrink: 0;
+        }
+
+            .sidebar a {
+                color: #e9f2ff;
+                text-decoration: none;
+            }
+
+            .sidebar .nav-link:hover {
+                background: rgba(255, 255, 255, 0.1);
+            }
+
+        main.content {
+            flex: 1;
+            padding: 1.5rem;
+            background: #f5f7fb;
+        }
+
+        .brand {
+            font-weight: 700;
+            padding: 1rem;
+            display: block;
+        }
+
+        .card-kpi {
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+        }
+    </style>
+</head>
+<body>
+    @if (haySesion && !esLogin)
+    {
+        <!-- NAVBAR SOLO SI HAY SESIÓN -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand fw-bold" href="/">Plataforma Web TECA</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topNav" aria-controls="topNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="topNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <span class="nav-link"><i class="fa-solid fa-user"></i> @usuario</span>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Account" asp-action="Logout">
+                                <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    }
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <div class="app-wrapper">
+        @if (haySesion && !esLogin)
+        {
+            <!-- SIDEBAR SOLO SI HAY SESIÓN -->
+            <aside class="sidebar">
+                <div class="px-3">
+                    <a class="brand text-white" href="/">
+                        <i class="fa-solid fa-solar-panel"></i> Plataforma Web Tecnoelectrica Industrial Andino S.A.C
+                    </a>
+
+                    <nav class="nav flex-column">
+                        <a class="nav-link text-white" asp-controller="Home" asp-action="Index"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+                        <a class="nav-link text-white" asp-controller="Clientes" asp-action="Index"><i class="fa-solid fa-users"></i> Clientes</a>
+                        <a class="nav-link text-white" asp-controller="Productos" asp-action="Index"><i class="fa-solid fa-boxes-stacked"></i> Repuestos</a>
+                        <a class="nav-link text-white" asp-controller="Ventas" asp-action="Index"><i class="fa-solid fa-receipt"></i> Ventas</a>
+                        <a class="nav-link text-white" asp-controller="Mantenimientos" asp-action="Index"><i class="fa-solid fa-tools"></i> Mantenimientos</a>
+                        <a class="nav-link text-white" asp-controller="Reportes" asp-action="Index"><i class="fa-solid fa-chart-line"></i> Reportes</a>
+                        <a class="nav-link text-white" asp-controller="Usuarios" asp-action="Index"><i class="fa-solid fa-user-gear"></i> Usuarios</a>
+                        <a class="nav-link text-white" asp-controller="SistemasRenovables" asp-action="Index"><i class="fa-solid fa-user-gear"></i> SistemasRenovables</a>
+                        <a class="nav-link text-white" asp-controller="CalendarioAlertas" asp-action="Index"><i class="fa-solid fa-user-gear"></i> Calendario Alertas</a>
+                        
+                    </nav>
+                </div>
+            </aside>
+        }
+
+        <main class="content">
+            <div class="container-fluid">
+                @RenderBody()
+            </div>
+        </main>
+    </div>
+
+    @if (haySesion && !esLogin)
+    {
+        <!-- FOOTER SOLO SI HAY SESIÓN -->
+        <footer class="text-center py-3">
+            <small>© @DateTime.Now.Year TECA — Plataforma de gestión de mantenimiento y ventas</small>
+        </footer>
+    }
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

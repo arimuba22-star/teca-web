@@ -1,0 +1,49 @@
+﻿@{
+    ViewData["Title"] = "Calendario de Mantenimientos";
+}
+
+<link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link href="~/lib/fullcalendar/main.min.css" rel="stylesheet" />
+
+<div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+        <h5 class="card-title mb-0">Calendario de Mantenimientos</h5>
+    </div>
+    <div class="card-body">
+        <div id="calendar"></div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/fullcalendar/index.global.min.js"></script>
+    <script src="~/lib/fullcalendar/locales-all.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'es',
+                events: '/CalendarioAlertas/ObtenerEventos',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                // Mejoras visuales para los eventos
+                eventDidMount: function(info) {
+                    if (info.event.extendedProps.nombreCliente) {
+                        info.el.title = `Cliente: ${info.event.extendedProps.nombreCliente}`;
+                    }
+                },
+                dateClick: function(info) {
+                    alert('Fecha seleccionada: ' + info.dateStr);
+                },
+                eventClick: function(info) {
+                    alert('Evento seleccionado: ' + info.event.title);
+                }
+            });
+            calendar.render();
+        });
+    </script>
+}

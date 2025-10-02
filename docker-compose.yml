@@ -1,0 +1,14 @@
+services:
+  webapp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: webapp_energia
+    env_file:
+      - .env
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__BDEnergia=Server=${DB_SERVER},${DB_PORT};Database=${DB_NAME};User Id=${DB_USER};Password=${DB_PASSWORD};TrustServerCertificate=True;Encrypt=True;
+    ports:
+      - "5000:80"

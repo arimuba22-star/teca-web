@@ -1,0 +1,144 @@
+﻿@model SWebEnergia.Models.ViewModels.MantenimientoViewModel
+
+@{
+    ViewData["Title"] = "Editar Mantenimiento";
+}
+
+<h2>Editar Mantenimiento</h2>
+
+<form asp-action="Edit" method="post" id="formMantenimiento">
+    <input type="hidden" asp-for="IdMantenimiento" />
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label>Clientes</label>
+            <input type="text" id="filtroCliente" class="form-control mb-2" placeholder="Filtrar cliente...">
+            <div id="clientesList" style="max-height:200px;overflow-y:auto;">
+                @foreach (var cliente in Model.Clientes)
+                {
+                    <div class="form-check">
+                        <input class="form-check-input cliente-radio" type="radio"
+                               name="IdCliente" value="@cliente.IdCliente" id="cliente_@cliente.IdCliente"
+                               @(cliente.IdCliente == Model.IdCliente ? "checked" : "")>
+                        <label class="form-check-label" for="cliente_@cliente.IdCliente">
+                            @cliente.Nombre
+                        </label>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <label>Sistemas</label>
+            <input type="text" id="filtroSistema" class="form-control mb-2" placeholder="Filtrar sistema...">
+            <div id="sistemasList" style="max-height:200px;overflow-y:auto;">
+                @foreach (var sistema in Model.Sistemas)
+                {
+                    <div class="form-check">
+                        <input class="form-check-input sistema-radio" type="radio" name="IdSistema"
+                               value="@sistema.IdSistema" id="sistema_@sistema.IdSistema"
+                               @(sistema.IdSistema == Model.IdSistema ? "checked" : "")>
+                        <label class="form-check-label" for="sistema_@sistema.IdSistema">
+                            @sistema.Descripcion
+                        </label>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <label>Tipo Mantenimiento</label>
+            <select asp-for="TipoMantenimiento" class="form-control"
+                    asp-items="@(ViewBag.Tipos as List<SelectListItem>)"></select>
+        </div>
+        <div class="col-md-3">
+            <label>Estado</label>
+            <select asp-for="Estado" class="form-control"
+                    asp-items="@(ViewBag.Estados as List<SelectListItem>)"></select>
+        </div>
+        <div class="col-md-3">
+            <label>Fecha Programada</label>
+            <input asp-for="FechaProgramada" class="form-control" type="date" />
+        </div>
+        <div class="col-md-3">
+            <label>Costo Mantenimiento</label>
+            <input asp-for="CostoMantenimiento" class="form-control" value="@Model.CostoMantenimiento" />
+        </div>
+        <div class="col-md-3" id="tipoComprobanteContainer">
+            <label>Tipo Comprobante</label>
+            <select asp-for="TipoComprobante" class="form-control"
+                    asp-items="@(ViewBag.TiposComprobante as List<SelectListItem>)"></select>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label>Diagnóstico</label>
+            <textarea class="form-control" name="Diagnostico" rows="3">@Model.Diagnostico</textarea>
+        </div>
+        <div class="col-md-6">
+            <label>Observaciones</label>
+            <textarea class="form-control" name="Observaciones" rows="3">@Model.Observaciones</textarea>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Guardar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Filtrado clientes
+            $('#filtroCliente').on('input', function () {
+                var filtro = $(this).val().toLowerCase();
+                $('#clientesList .form-check').each(function () {
+                    var nombre = $(this).text().toLowerCase();
+                    $(this).toggle(nombre.includes(filtro));
+                });
+            });
+
+            // Filtrado sistemas
+            $('#filtroSistema').on('input', function () {
+                var filtro = $(this).val().toLowerCase();
+                $('#sistemasList .form-check').each(function () {
+                    var nombre = $(this).text().toLowerCase();
+                    $(this).toggle(nombre.includes(filtro));
+                });
+            });
+
+            // Cargar sistemas por cliente seleccionado
+            $('.cliente-radio').change(function () {
+                var idCliente = $(this).val();
+
+                $.getJSON('@Url.Action("ObtenerSistemasPorCliente", "Mantenimientos")?idCliente=' + idCliente, function (data) {
+                    var html = '';
+                    data.forEach(function (s) {
+                        html += `<div class="form-check">
+                                    <input class="form-check-input sistema-radio" type="radio" name="IdSistema" value="${s.idSistema}" id="sistema_${s.idSistema}">
+                                    <label class="form-check-label" for="sistema_${s.idSistema}">${s.descripcion}</label>
+                                </div>`;
+                    });
+
+                    $('#sistemasList').html(html);
+
+                    if (data.length > 0) {
+                        $('#sistema_' + data[0].idSistema).prop('checked', true);
+                    }
+                });
+            });
+
+            // Inicializar sistemas al cargar la página
+            var primerCliente = $('input[name="IdCliente"]:checked');
+            if (primerCliente.length) {
+                primerCliente.trigger('change');
+            }
+
+            // ✅ Eliminar la lógica de mostrar/ocultar del Tipo de Comprobante
+            // function toggleTipoComprobante() { ... }
+            // y la línea $('#Estado').on('change', toggleTipoComprobante);
+        });
+    </script>
+}

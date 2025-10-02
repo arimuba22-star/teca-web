@@ -1,0 +1,37 @@
+﻿@model SWebEnergia.Models.Venta
+
+@{
+    ViewData["Title"] = "Eliminar Venta";
+}
+
+<div class="card p-3">
+    <h5 class="mb-3 text-danger"><i class="fa-solid fa-trash"></i> Eliminar Venta</h5>
+
+    <dl class="row">
+        <dt class="col-sm-3">Cliente</dt>
+        <dd class="col-sm-9">@Model.IdClienteNavigation?.Nombre</dd>
+
+        <dt class="col-sm-3">Mantenimiento</dt>
+        <dd class="col-sm-9">@Model.IdMantenimientoNavigation?.TipoMantenimiento</dd>
+
+        <dt class="col-sm-3">Fecha</dt>
+        <dd class="col-sm-9">@Model.Fecha?.ToString("dd/MM/yyyy")</dd>
+
+        <dt class="col-sm-3">Subtotal</dt>
+        <dd class="col-sm-9">@(Model.Subtotal?.ToString("C") ?? "N/A")</dd>
+
+        <dt class="col-sm-3">Impuestos</dt>
+        <dd class="col-sm-9">@(Model.Impuestos?.ToString("C") ?? "N/A")</dd>
+
+        <dt class="col-sm-3">Total</dt>
+        <dd class="col-sm-9">@(Model.Total?.ToString("C") ?? "N/A")</dd>
+    </dl>
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="IdVenta" />
+        <div class="mt-4 d-flex gap-2">
+            <button type="submit" class="btn btn-danger"><i class="fa-solid fa-trash"></i> Eliminar</button>
+            <a class="btn btn-secondary" asp-action="Index">Cancelar</a>
+        </div>
+    </form>
+</div>

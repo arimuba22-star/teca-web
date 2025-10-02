@@ -1,0 +1,283 @@
+﻿@model SWebEnergia.Models.Venta
+@{
+    ViewData["Title"] = "Nueva Venta";
+}
+
+<div class="card p-3">
+    <h5 class="mb-3"><i class="fa-solid fa-cart-plus"></i> Nueva Venta</h5>
+
+    <form id="ventaForm">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">Cliente</label>
+                <input type="text" id="filtroCliente" class="form-control mb-2" placeholder="Filtrar cliente...">
+                <div id="clientesList" style="max-height:200px;overflow-y:auto;">
+                    @foreach (var cliente in (IEnumerable<SWebEnergia.Models.Cliente>)ViewData["Clientes"])
+                    {
+                        <div class="form-check">
+                            <input class="form-check-input cliente-radio" type="radio"
+                                   name="IdClienteRadio" value="@cliente.IdCliente" id="cliente_@cliente.IdCliente" data-documento="@cliente.NDocumento">
+                            <label class="form-check-label" for="cliente_@cliente.IdCliente">
+                                @cliente.Nombre
+                            </label>
+                        </div>
+                    }
+                </div>
+                <input type="hidden" asp-for="IdCliente" id="IdCliente" />
+                <span asp-validation-for="IdCliente" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="IdMantenimiento" class="form-label"></label>
+                <input type="text" id="filtroMantenimiento" class="form-control mb-2" placeholder="Filtrar mantenimiento...">
+                <div id="mantenimientosList" style="max-height:200px;overflow-y:auto;">
+                </div>
+                <input type="hidden" asp-for="IdMantenimiento" id="IdMantenimiento" />
+                <span asp-validation-for="IdMantenimiento" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6" id="tipoComprobanteContainer" style="display:none;">
+                <label class="form-label">Tipo de Comprobante</label>
+                <select id="tipoComprobante" class="form-select">
+                    <option value="Boleta">Boleta</option>
+                    <option value="Factura">Factura</option>
+                </select>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="Fecha" class="form-label"></label>
+                <input asp-for="Fecha" class="form-control" type="date" disabled />
+                <span asp-validation-for="Fecha" class="text-danger"></span>
+            </div>
+        </div>
+
+        <hr class="my-4" />
+
+        <h4 class="mt-4">Productos de la Venta</h4>
+        <div id="productos-container"></div>
+        <button type="button" class="btn btn-outline-secondary mb-3" id="btnAgregarProducto">+ Agregar Producto</button>
+
+        <template id="producto-template">
+            <div class="producto-item border p-3 mb-3 rounded bg-light">
+                <div class="row g-2">
+                    <div class="col-md-5">
+                        <label class="form-label">Producto</label>
+                        <select class="form-select producto-select">
+                            <option value="">-- Seleccione producto --</option>
+                            @foreach (var producto in (List<SWebEnergia.Models.Producto>)ViewData["Productos"])
+                            {
+                                <option value="@producto.IdProducto" data-precio="@producto.PrecioVenta">@producto.Nombre</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Cantidad</label>
+                        <input type="number" step="1" min="1" class="form-control cantidad-input" />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Precio Unitario</label>
+                        <input type="number" step="0.01" class="form-control precio-input" readonly />
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label">Subtotal</label>
+                        <input type="text" class="form-control subtotal-input" readonly />
+                    </div>
+                </div>
+                <button type="button" class="btn btn-danger btn-sm mt-2 btn-eliminar-producto">Eliminar</button>
+            </div>
+        </template>
+
+        <div class="mt-4 d-flex gap-2">
+            <button type="button" class="btn btn-primary" id="btnGuardarVenta"><i class="fa-solid fa-check"></i> Siguiente</button>
+            <a class="btn btn-secondary" asp-action="Index">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            const filtroClienteInput = $('#filtroCliente');
+            const clientesList = $('#clientesList');
+            const idClienteInput = $('#IdCliente');
+            const filtroMantenimientoInput = $('#filtroMantenimiento');
+            const mantenimientosList = $('#mantenimientosList');
+            const idMantenimientoInput = $('#IdMantenimiento');
+            const tipoComprobanteContainer = $('#tipoComprobanteContainer');
+            const tipoComprobanteSelect = $('#tipoComprobante');
+            const productosContainer = $('#productos-container');
+            const productoTemplate = $('#producto-template');
+
+            // Filtrado dinámico para clientes
+            filtroClienteInput.on('input', function () {
+                var filtro = $(this).val().toLowerCase();
+                clientesList.find('.form-check').each(function () {
+                    var nombre = $(this).text().toLowerCase();
+                    $(this).toggle(nombre.includes(filtro));
+                });
+            });
+
+            // Filtrado dinámico para mantenimientos
+            filtroMantenimientoInput.on('input', function () {
+                var filtro = $(this).val().toLowerCase();
+                mantenimientosList.find('.form-check').each(function () {
+                    var nombre = $(this).text().toLowerCase();
+                    $(this).toggle(nombre.includes(filtro));
+                });
+            });
+
+            // Cuando se selecciona un cliente (radio button)
+            clientesList.on('change', '.cliente-radio', function () {
+                const idCliente = $(this).val();
+                const documento = $(this).data('documento');
+
+                // Asignar el valor al input hidden
+                idClienteInput.val(idCliente);
+
+                // Mostrar/ocultar tipo de comprobante
+                if (documento && documento.length === 11) {
+                    tipoComprobanteContainer.show();
+                } else {
+                    tipoComprobanteContainer.hide();
+                }
+
+                // Cargar mantenimientos
+                $.get('/Ventas/GetMantenimientosPorCliente', { idCliente: idCliente })
+                    .done(function (data) {
+                        mantenimientosList.empty();
+
+                        if (data.length === 0) {
+                            mantenimientosList.append('<p>No hay mantenimientos finalizados para este cliente.</p>');
+                            return;
+                        }
+
+                        data.forEach(function (m) {
+                            mantenimientosList.append(`
+                                <div class="form-check">
+                                    <input class="form-check-input mantenimiento-radio" type="radio"
+                                           name="IdMantenimientoRadio" value="${m.idMantenimiento}" id="mantenimiento_${m.idMantenimiento}">
+                                    <label class="form-check-label" for="mantenimiento_${m.idMantenimiento}">
+                                        ${m.nombre}
+                                    </label>
+                                </div>
+                            `);
+                        });
+
+                        // Opcional: Seleccionar el primer mantenimiento por defecto
+                        const primerMantenimiento = mantenimientosList.find('.mantenimiento-radio:first');
+                        if (primerMantenimiento.length) {
+                             primerMantenimiento.prop('checked', true).trigger('change');
+                        }
+                    });
+            });
+
+            // Cuando se selecciona un mantenimiento (radio button)
+            mantenimientosList.on('change', '.mantenimiento-radio', function() {
+                 idMantenimientoInput.val($(this).val());
+            });
+
+            // Lógica para agregar productos
+            $('#btnAgregarProducto').on('click', function () {
+                const clone = productoTemplate.html();
+                productosContainer.append(clone);
+            });
+
+            // Delegación de eventos para productos dinámicos
+            productosContainer.on('change', '.producto-select', function () {
+                const precio = $(this).find('option:selected').data('precio');
+                const container = $(this).closest('.producto-item');
+                container.find('.precio-input').val(precio);
+                calcularSubtotal(container);
+            });
+
+            productosContainer.on('input', '.cantidad-input', function () {
+                const container = $(this).closest('.producto-item');
+                calcularSubtotal(container);
+            });
+
+            productosContainer.on('click', '.btn-eliminar-producto', function () {
+                $(this).closest('.producto-item').remove();
+            });
+
+            function calcularSubtotal(container) {
+                const cantidad = parseFloat(container.find('.cantidad-input').val()) || 0;
+                const precio = parseFloat(container.find('.precio-input').val()) || 0;
+                const subtotal = cantidad * precio;
+                container.find('.subtotal-input').val(subtotal.toFixed(2));
+            }
+
+            // Lógica para guardar la venta
+            $('#btnGuardarVenta').on('click', async function () {
+                const idCliente = idClienteInput.val();
+                if (!idCliente) {
+                    alert("Debe seleccionar un cliente válido.");
+                    return;
+                }
+
+                // Asegúrate de que IdMantenimiento tenga un valor si existe un radio button seleccionado
+                const idMantenimiento = mantenimientosList.find('.mantenimiento-radio:checked').val() || null;
+                idMantenimientoInput.val(idMantenimiento);
+
+                const venta = {
+                    idCliente: parseInt(idCliente),
+                    idMantenimiento: parseInt(idMantenimiento) || null,
+                    tipoComprobante: tipoComprobanteSelect.val() || "Boleta",
+                    detalleVenta: []
+                };
+
+                const productos = productosContainer.find(".producto-item");
+                productos.each(function () {
+                    const item = $(this);
+                    const idProducto = parseInt(item.find(".producto-select").val());
+                    const cantidad = parseFloat(item.find(".cantidad-input").val());
+                    const precioUnitario = parseFloat(item.find(".precio-input").val());
+
+                    if (!isNaN(idProducto) && cantidad > 0 && precioUnitario > 0) {
+                        venta.detalleVenta.push({
+                            idProducto: idProducto,
+                            cantidad: cantidad,
+                            precioUnitario: precioUnitario
+                        });
+                    }
+                });
+
+                if (venta.detalleVenta.length === 0) {
+                    alert("Debe agregar al menos un producto.");
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/Ventas/Create', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                        },
+                        body: JSON.stringify(venta)
+                    });
+
+                    if (response.ok) {
+                        window.location.href = '/Ventas/Index';
+                    } else {
+                        const msg = await response.text();
+                        alert("Error al registrar venta: " + msg);
+                    }
+                } catch (error) {
+                    alert("Error al procesar venta: " + error.message);
+                }
+            });
+
+            // Opcional: Seleccionar el primer cliente al cargar la página
+            const primerCliente = clientesList.find('.cliente-radio:first');
+            if (primerCliente.length) {
+                primerCliente.prop('checked', true).trigger('change');
+            }
+        });
+    </script>
+}

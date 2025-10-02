@@ -1,0 +1,137 @@
+﻿@model SWebEnergia.Models.ViewModels.MantenimientoViewModel
+
+@{
+    ViewData["Title"] = "Crear Mantenimiento";
+}
+
+<h2>Crear Mantenimiento</h2>
+
+<form asp-action="Create" method="post">
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label>Clientes</label>
+            <input type="text" id="filtroCliente" class="form-control mb-2" placeholder="Filtrar cliente...">
+            <div id="clientesList" style="max-height:200px;overflow-y:auto;">
+                @foreach (var cliente in Model.Clientes)
+                {
+                    <div class="form-check">
+                        <input class="form-check-input cliente-radio" type="radio"
+                               name="IdClienteRadio" value="@cliente.IdCliente" id="cliente_@cliente.IdCliente">
+                        <label class="form-check-label" for="cliente_@cliente.IdCliente">
+                            @cliente.Nombre
+                        </label>
+                    </div>
+                }
+            </div>
+            <input type="hidden" name="IdCliente" id="IdCliente" />
+        </div>
+
+        <div class="col-md-6">
+            <label>Sistemas</label>
+            <input type="text" id="filtroSistema" class="form-control mb-2" placeholder="Filtrar sistema...">
+            <div id="sistemasList" style="max-height:200px;overflow-y:auto;">
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <label>Tipo Mantenimiento</label>
+            <select asp-for="TipoMantenimiento" class="form-control"
+                    asp-items="@(new SelectList(ViewBag.TiposMantenimiento ?? new List<string>()))"></select>
+        </div>
+        <div class="col-md-3">
+            <label>Estado</label>
+            <select asp-for="Estado" class="form-control"
+                    asp-items="@(new SelectList(ViewBag.Estados ?? new List<string>()))"></select>
+        </div>
+        <div class="col-md-3">
+            <label>Fecha Programada</label>
+            <input asp-for="FechaProgramada" class="form-control" type="date" />
+        </div>
+        <div class="col-md-3">
+            <label>Costo Mantenimiento</label>
+            <input asp-for="CostoMantenimiento" class="form-control" />
+        </div>
+
+        <div class="col-md-3" id="tipoComprobanteContainer">
+            <label>Tipo Comprobante</label>
+            <select asp-for="TipoComprobante" class="form-control">
+                <option value="">-- Seleccionar --</option>
+                <option value="Factura">Factura</option>
+                <option value="Boleta">Boleta</option>
+            </select>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-success">Guardar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Filtrado dinámico para clientes
+            $('#filtroCliente').on('input', function () {
+                var filtro = $(this).val().toLowerCase();
+                $('#clientesList .form-check').each(function () {
+                    var nombre = $(this).text().toLowerCase();
+                    $(this).toggle(nombre.includes(filtro));
+                });
+            });
+
+            // Filtrado dinámico para sistemas
+            $('#filtroSistema').on('input', function () {
+                var filtro = $(this).val().toLowerCase();
+                $('#sistemasList .form-check').each(function () {
+                    var nombre = $(this).text().toLowerCase();
+                    $(this).toggle(nombre.includes(filtro));
+                });
+            });
+
+            // Cargar sistemas cuando se selecciona un cliente
+            $('.cliente-radio').on('change', function () {
+                const idCliente = $(this).val();
+                $('#IdCliente').val(idCliente);
+
+                $.get('/Mantenimientos/ObtenerSistemasPorCliente', { idCliente: idCliente })
+                    .done(function (data) {
+                        const contenedor = $('#sistemasList');
+                        contenedor.empty();
+
+                        if (data.length === 0) {
+                            contenedor.append('<p>No hay sistemas registrados para este cliente.</p>');
+                            return;
+                        }
+
+                        data.forEach(function (sistema) {
+                            contenedor.append(`
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio"
+                                           name="IdSistema" value="${sistema.idSistema}" id="sistema_${sistema.idSistema}">
+                                    <label class="form-check-label" for="sistema_${sistema.idSistema}">
+                                        ${sistema.descripcion}
+                                    </label>
+                                </div>
+                            `);
+                        });
+
+                        const primerSistema = $('input[name="IdSistema"]:first');
+                        if (primerSistema.length) {
+                            primerSistema.prop('checked', true);
+                            $('#IdSistema').val(primerSistema.val());
+                        }
+                    });
+            });
+
+            var primerCliente = $('input[name="IdClienteRadio"]').first();
+            if (primerCliente.length) {
+                primerCliente.prop('checked', true).trigger('change');
+            }
+
+            // ✅ Eliminar la función toggleTipoComprobante para que el campo siempre se muestre
+            // y eliminar la llamada a la función en el evento de cambio del select de estado.
+        });
+    </script>
+}

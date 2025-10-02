@@ -1,0 +1,172 @@
+﻿@model SWebEnergia.Models.SistemasRenovable
+@{
+    ViewData["Title"] = "Registrar Sistema Renovable";
+}
+
+<h1 class="mb-4">Nuevo Sistema Renovable</h1>
+
+<form asp-action="Create" method="post">
+    <div class="row">
+        <!-- Campos del sistema renovable -->
+        <div class="col-md-6 mb-3">
+            <label asp-for="IdCliente" class="form-label"></label>
+            <select asp-for="IdCliente" asp-items="ViewBag.Clientes" class="form-select"></select>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label asp-for="IdTipoSistema" class="form-label"></label>
+            <select asp-for="IdTipoSistema" asp-items="ViewBag.TiposSistema" class="form-select"></select>
+        </div>
+        <div class="col-md-12 mb-3">
+            <label asp-for="Descripcion" class="form-label"></label>
+            <input asp-for="Descripcion" class="form-control" />
+        </div>
+        <div class="col-md-6 mb-3">
+            <label asp-for="FechaInstalacion" class="form-label"></label>
+            <input asp-for="FechaInstalacion" class="form-control" type="date" />
+        </div>
+        <div class="col-md-6 mb-3">
+            <label asp-for="CapacidadKw" class="form-label"></label>
+            <input asp-for="CapacidadKw" class="form-control" />
+        </div>
+        <div class="col-md-6 mb-3">
+            <label asp-for="Estado" class="form-label"></label>
+            <select asp-for="Estado" asp-items="ViewBag.Estados" class="form-select"></select>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label asp-for="Departamento" class="form-label"></label>
+            <select asp-for="Departamento" class="form-select" id="departamento-select">
+                <option value="">-- Seleccione un departamento --</option>
+                <option value="Amazonas">Amazonas</option>
+                <option value="Áncash">Áncash</option>
+                <option value="Apurímac">Apurímac</option>
+                <option value="Arequipa">Arequipa</option>
+                <option value="Ayacucho">Ayacucho</option>
+                <option value="Cajamarca">Cajamarca</option>
+                <option value="Callao">Callao</option>
+                <option value="Cusco">Cusco</option>
+                <option value="Huancavelica">Huancavelica</option>
+                <option value="Huánuco">Huánuco</option>
+                <option value="Ica">Ica</option>
+                <option value="Junín">Junín</option>
+                <option value="La Libertad">La Libertad</option>
+                <option value="Lambayeque">Lambayeque</option>
+                <option value="Lima">Lima</option>
+                <option value="Loreto">Loreto</option>
+                <option value="Madre de Dios">Madre de Dios</option>
+                <option value="Moquegua">Moquegua</option>
+                <option value="Pasco">Pasco</option>
+                <option value="Piura">Piura</option>
+                <option value="Puno">Puno</option>
+                <option value="San Martín">San Martín</option>
+                <option value="Tacna">Tacna</option>
+                <option value="Tumbes">Tumbes</option>
+                <option value="Ucayali">Ucayali</option>
+            </select>
+        </div>
+
+
+        <div class="col-md-6 mb-3">
+            <label asp-for="Provincia" class="form-label"></label>
+            <select asp-for="Provincia" class="form-select" id="provincia-select">
+                <option value="">-- Seleccione una provincia --</option>
+            </select>
+        </div>
+
+        <div class="col-md-12 mb-3">
+            <label asp-for="DireccionExacta" class="form-label"></label>
+            <input asp-for="DireccionExacta" class="form-control" />
+        </div>
+        <div class="col-md-12 mb-3">
+            <label asp-for="Referencia" class="form-label"></label>
+            <input asp-for="Referencia" class="form-control" />
+        </div>
+        <div class="col-md-12 mb-3">
+            <label asp-for="Observaciones" class="form-label"></label>
+            <textarea asp-for="Observaciones" class="form-control" rows="3"></textarea>
+        </div>
+    </div>
+
+    <!-- Sección de Componentes -->
+    <h4 class="mt-4">Componentes del Sistema</h4>
+    <div id="componentes-container"></div>
+
+    <button type="button" class="btn btn-outline-secondary mb-3" onclick="agregarComponente()">+ Agregar Componente</button>
+
+    <template id="componente-template">
+        <div class="componente-item border p-3 mb-3 rounded bg-light">
+            <div class="row">
+                <div class="col-md-6 mb-2">
+                    <label>Tipo Componente</label>
+                    <select name="componentes[0].IdTipoComponente" class="form-select tipo-componente">
+                        @foreach (var tipo in (SelectList)ViewBag.TiposComponentes)
+                        {
+                            <option value="@tipo.Value">@tipo.Text</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <label>Descripción</label>
+                    <input name="componentes[0].Descripcion" class="form-control descripcion" />
+                </div>
+                <div class="col-md-6 mb-2">
+                    <label>Capacidad Energética (kW)</label>
+                    <input name="componentes[0].CapacidadEnergetica" type="number" step="0.01" class="form-control capacidad" />
+                </div>
+                <div class="col-md-6 mb-2">
+                    <label>Fecha Instalación</label>
+                    <input name="componentes[0].FechaInstalacion" type="date" class="form-control fecha-instalacion" />
+                </div>
+            </div>
+            <button type="button" class="btn btn-danger btn-sm mt-2" onclick="this.closest('.componente-item').remove()">Eliminar</button>
+        </div>
+    </template>
+
+
+    <div class="mt-4">
+        <button type="submit" class="btn btn-success"><i class="fa fa-save"></i> Guardar</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        let indexComponente = 0;
+
+        function agregarComponente() {
+            const template = document.getElementById('componente-template');
+            const clone = template.content.cloneNode(true);
+
+            clone.querySelectorAll('[name]').forEach(el => {
+                el.name = el.name.replace(/\[0\]/g, `[${indexComponente}]`);
+            });
+
+            document.getElementById('componentes-container').appendChild(clone);
+            indexComponente++;
+        }
+
+        // 🔽 Lógica para cargar provincias dinámicamente
+        document.getElementById('departamento-select').addEventListener('change', function () {
+            const departamento = this.value;
+            const provinciaSelect = document.getElementById('provincia-select');
+
+            // Limpiar provincias anteriores
+            provinciaSelect.innerHTML = '<option value="">-- Seleccione una provincia --</option>';
+
+            if (!departamento) return;
+
+            fetch(`/SistemasRenovables/ObtenerProvincias?departamento=${departamento}`)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(provincia => {
+                        const option = document.createElement('option');
+                        option.value = provincia;
+                        option.text = provincia;
+                        provinciaSelect.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error al obtener provincias:', error);
+                });
+        });
+    </script>
+}

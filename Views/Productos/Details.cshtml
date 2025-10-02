@@ -1,0 +1,63 @@
+﻿@model SWebEnergia.Models.Producto
+@{
+    ViewData["Title"] = "Detalle de Repuesto";
+}
+
+<div class="card p-3">
+    <h5 class="mb-3"><i class="fa-solid fa-box"></i> Detalle del Repuesto</h5>
+
+    @if (!string.IsNullOrEmpty(Model.ImagenRuta))
+    {
+        <div class="mb-3 text-center">
+            <img src="@Model.ImagenRuta" class="img-thumbnail" style="max-height:200px;" />
+        </div>
+    }
+
+    <dl class="row">
+        <dt class="col-sm-2">Código SKU</dt>
+        <dd class="col-sm-10">@Model.CodigoSku</dd>
+
+        <dt class="col-sm-2">Nombre</dt>
+        <dd class="col-sm-10">@Model.Nombre</dd>
+
+        <dt class="col-sm-2">Categoría</dt>
+        <dd class="col-sm-10">@Model.IdCategoriaNavigation?.Nombre</dd>
+
+        <dt class="col-sm-2">Descripción</dt>
+        <dd class="col-sm-10">@Model.Descripcion</dd>
+
+        <dt class="col-sm-2">Precio Compra</dt>
+        <dd class="col-sm-10">@Model.PrecioCompra?.ToString("C")</dd>
+
+        <dt class="col-sm-2">Precio Venta</dt>
+        <dd class="col-sm-10">@Model.PrecioVenta.ToString("C")</dd>
+
+        <dt class="col-sm-2">Stock</dt>
+        <dd class="col-sm-10">@Model.Stock</dd>
+
+        <dt class="col-sm-2">Stock Mínimo</dt>
+        <dd class="col-sm-10">@Model.StockMinimo</dd>
+
+        <dt class="col-sm-2">Unidad de Medida</dt>
+        <dd class="col-sm-10">@Model.UnidadMedida</dd>
+
+        <dt class="col-sm-2">Frecuencia Mantenimiento (Años)</dt>
+        <dd class="col-sm-10">@Model.FrecuenciaMantenimientoRecomendado</dd>
+
+        <dt class="col-sm-2">Tiempo Vida Útil (Años)</dt>
+        <dd class="col-sm-10">@Model.TiempoVidaUtil</dd>
+
+        <dt class="col-sm-2">Fecha Alta</dt>
+        <dd class="col-sm-10">@Model.FechaAlta?.ToString("dd/MM/yyyy")</dd>
+
+        <dt class="col-sm-2">Activo</dt>
+        <dd class="col-sm-10">@(Model.Activo)</dd>
+    </dl>
+
+    <div class="mt-3 d-flex gap-2">
+        <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model.IdProducto">
+            <i class="fa-solid fa-pen"></i> Editar
+        </a>
+        <a class="btn btn-secondary" asp-action="Index">Volver</a>
+    </div>
+</div>

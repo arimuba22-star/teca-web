@@ -1,0 +1,1163 @@
+USE [master]
+GO
+/****** Object:  Database [master]    Script Date: 1/10/2025 21:49:42 ******/
+CREATE DATABASE [master]
+ CONTAINMENT = NONE
+ ON  PRIMARY 
+( NAME = N'master', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\master.mdf' , SIZE = 73728KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
+ LOG ON 
+( NAME = N'master_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\master_log.ldf' , SIZE = 73728KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
+ WITH CATALOG_COLLATION = DATABASE_DEFAULT, LEDGER = OFF
+GO
+ALTER DATABASE [master] SET COMPATIBILITY_LEVEL = 160
+GO
+IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
+begin
+EXEC [master].[dbo].[sp_fulltext_database] @action = 'enable'
+end
+GO
+ALTER DATABASE [master] SET ANSI_NULL_DEFAULT OFF 
+GO
+ALTER DATABASE [master] SET ANSI_NULLS OFF 
+GO
+ALTER DATABASE [master] SET ANSI_PADDING OFF 
+GO
+ALTER DATABASE [master] SET ANSI_WARNINGS OFF 
+GO
+ALTER DATABASE [master] SET ARITHABORT OFF 
+GO
+ALTER DATABASE [master] SET AUTO_CLOSE OFF 
+GO
+ALTER DATABASE [master] SET AUTO_SHRINK OFF 
+GO
+ALTER DATABASE [master] SET AUTO_UPDATE_STATISTICS ON 
+GO
+ALTER DATABASE [master] SET CURSOR_CLOSE_ON_COMMIT OFF 
+GO
+ALTER DATABASE [master] SET CURSOR_DEFAULT  GLOBAL 
+GO
+ALTER DATABASE [master] SET CONCAT_NULL_YIELDS_NULL OFF 
+GO
+ALTER DATABASE [master] SET NUMERIC_ROUNDABORT OFF 
+GO
+ALTER DATABASE [master] SET QUOTED_IDENTIFIER OFF 
+GO
+ALTER DATABASE [master] SET RECURSIVE_TRIGGERS OFF 
+GO
+ALTER DATABASE [master] SET  DISABLE_BROKER 
+GO
+ALTER DATABASE [master] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
+GO
+ALTER DATABASE [master] SET DATE_CORRELATION_OPTIMIZATION OFF 
+GO
+ALTER DATABASE [master] SET TRUSTWORTHY OFF 
+GO
+ALTER DATABASE [master] SET ALLOW_SNAPSHOT_ISOLATION OFF 
+GO
+ALTER DATABASE [master] SET PARAMETERIZATION SIMPLE 
+GO
+ALTER DATABASE [master] SET READ_COMMITTED_SNAPSHOT OFF 
+GO
+ALTER DATABASE [master] SET HONOR_BROKER_PRIORITY OFF 
+GO
+ALTER DATABASE [master] SET RECOVERY FULL 
+GO
+ALTER DATABASE [master] SET  MULTI_USER 
+GO
+ALTER DATABASE [master] SET PAGE_VERIFY CHECKSUM  
+GO
+ALTER DATABASE [master] SET DB_CHAINING OFF 
+GO
+ALTER DATABASE [master] SET FILESTREAM( NON_TRANSACTED_ACCESS = OFF ) 
+GO
+ALTER DATABASE [master] SET TARGET_RECOVERY_TIME = 60 SECONDS 
+GO
+ALTER DATABASE [master] SET DELAYED_DURABILITY = DISABLED 
+GO
+ALTER DATABASE [master] SET ACCELERATED_DATABASE_RECOVERY = OFF  
+GO
+EXEC sys.sp_db_vardecimal_storage_format N'master', N'ON'
+GO
+ALTER DATABASE [master] SET QUERY_STORE = ON
+GO
+ALTER DATABASE [master] SET QUERY_STORE (OPERATION_MODE = READ_WRITE, CLEANUP_POLICY = (STALE_QUERY_THRESHOLD_DAYS = 30), DATA_FLUSH_INTERVAL_SECONDS = 900, INTERVAL_LENGTH_MINUTES = 60, MAX_STORAGE_SIZE_MB = 1000, QUERY_CAPTURE_MODE = AUTO, SIZE_BASED_CLEANUP_MODE = AUTO, MAX_PLANS_PER_QUERY = 200, WAIT_STATS_CAPTURE_MODE = ON)
+GO
+USE [master]
+GO
+/****** Object:  UserDefinedFunction [dbo].[fn_ProximoMantenimiento]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE FUNCTION [dbo].[fn_ProximoMantenimiento](@IdSistema INT)
+RETURNS DATE
+AS
+BEGIN
+    DECLARE @UltimoMantenimiento DATE;
+    DECLARE @IntervaloMeses INT;
+
+    SELECT @UltimoMantenimiento = UltimoMantenimiento
+    FROM SistemasRenovables
+    WHERE IdSistema = @IdSistema;
+
+    SELECT @IntervaloMeses = IntervaloMantenimientoMeses
+    FROM TiposSistema ts
+    JOIN SistemasRenovables s ON s.IdTipoSistema = ts.IdTipoSistema
+    WHERE s.IdSistema = @IdSistema;
+
+    RETURN DATEADD(MONTH, @IntervaloMeses, @UltimoMantenimiento);
+END;
+GO
+/****** Object:  UserDefinedFunction [dbo].[fn_StockDisponible]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE FUNCTION [dbo].[fn_StockDisponible](@IdProducto INT)
+RETURNS INT
+AS
+BEGIN
+    DECLARE @StockActual INT;
+
+    SELECT @StockActual = Stock
+    FROM Productos
+    WHERE IdProducto = @IdProducto;
+
+    RETURN ISNULL(@StockActual, 0);
+END;
+GO
+/****** Object:  Table [dbo].[Mantenimientos]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Mantenimientos](
+	[IdMantenimiento] [int] IDENTITY(1,1) NOT NULL,
+	[IdSistema] [int] NOT NULL,
+	[IdCliente] [int] NOT NULL,
+	[IdGrupoTecnico] [int] NULL,
+	[TipoMantenimiento] [nvarchar](20) NOT NULL,
+	[FechaSolicitud] [datetime] NULL,
+	[FechaProgramada] [datetime] NULL,
+	[FechaInicio] [datetime] NULL,
+	[FechaFin] [datetime] NULL,
+	[Estado] [nvarchar](20) NOT NULL,
+	[Diagnostico] [nvarchar](max) NULL,
+	[TrabajosRealizados] [nvarchar](max) NULL,
+	[Observaciones] [nvarchar](max) NULL,
+	[CostoTotal] [decimal](12, 2) NULL,
+	[CostoMantenimiento] [decimal](12, 2) NULL,
+	[RequiereProductos] [bit] NULL,
+ CONSTRAINT [PK__Mantenim__DD1C44178A5EF4D7] PRIMARY KEY CLUSTERED 
+(
+	[IdMantenimiento] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Clientes]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Clientes](
+	[IdCliente] [int] IDENTITY(1,1) NOT NULL,
+	[Nombre] [nvarchar](100) NOT NULL,
+	[Email] [nvarchar](100) NOT NULL,
+	[Telefono] [nvarchar](15) NULL,
+	[Direccion] [nvarchar](255) NULL,
+	[FechaRegistro] [datetime] NULL,
+	[FechaUltimaActualizacion] [datetime] NULL,
+	[TDocumento] [nvarchar](50) NULL,
+	[NDocumento] [nvarchar](50) NULL,
+	[FechaNacimiento] [date] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[IdCliente] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[Email] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  View [dbo].[vw_MantenimientosPorCliente]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[vw_MantenimientosPorCliente]
+AS
+SELECT 
+    c.IdCliente,
+    c.Nombre AS Cliente,
+    COUNT(m.IdMantenimiento) AS TotalMantenimientos,
+    SUM(m.CostoTotal) AS TotalCosto
+FROM Clientes c
+LEFT JOIN Mantenimientos m ON c.IdCliente = m.IdCliente
+GROUP BY c.IdCliente, c.Nombre;
+GO
+/****** Object:  Table [dbo].[Ventas]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Ventas](
+	[IdVenta] [int] IDENTITY(1,1) NOT NULL,
+	[IdCliente] [int] NOT NULL,
+	[Total] [decimal](12, 2) NOT NULL,
+	[Fecha] [datetime] NULL,
+	[IdMantenimiento] [int] NULL,
+	[Subtotal] [decimal](12, 2) NULL,
+	[Impuestos] [decimal](12, 2) NULL,
+	[TipoComprobante] [nvarchar](50) NULL,
+	[NumeroComprobante] [nvarchar](20) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[IdVenta] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  View [dbo].[vw_VentasPorCliente]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[vw_VentasPorCliente]
+AS
+SELECT 
+    c.IdCliente,
+    c.Nombre AS Cliente,
+    COUNT(v.IdVenta) AS TotalVentas,
+    SUM(v.Total) AS TotalFacturado
+FROM Clientes c
+LEFT JOIN Ventas v ON c.IdCliente = v.IdCliente
+GROUP BY c.IdCliente, c.Nombre;
+GO
+/****** Object:  Table [dbo].[TiposSistema]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[TiposSistema](
+	[IdTipoSistema] [int] IDENTITY(1,1) NOT NULL,
+	[Nombre] [nvarchar](50) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[IdTipoSistema] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[Nombre] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[SistemasRenovables]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[SistemasRenovables](
+	[IdSistema] [int] IDENTITY(1,1) NOT NULL,
+	[IdCliente] [int] NOT NULL,
+	[IdTipoSistema] [int] NOT NULL,
+	[Descripcion] [nvarchar](500) NULL,
+	[FechaInstalacion] [date] NOT NULL,
+	[CapacidadKW] [decimal](10, 2) NULL,
+	[Estado] [varchar](50) NULL,
+	[Departamento] [varchar](100) NULL,
+	[Provincia] [varchar](100) NULL,
+	[DireccionExacta] [varchar](255) NULL,
+	[Referencia] [varchar](255) NULL,
+	[Observaciones] [varchar](max) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[IdSistema] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Alertas]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Alertas](
+	[IdAlerta] [int] IDENTITY(1,1) NOT NULL,
+	[IdSistema] [int] NOT NULL,
+	[Tipo] [nvarchar](50) NULL,
+	[Mensaje] [nvarchar](500) NULL,
+	[Estado] [nvarchar](20) NULL,
+	[FechaGeneracion] [datetime] NULL,
+	[FechaResolucion] [datetime] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[IdAlerta] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  View [dbo].[vw_AlertasPendientes]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[vw_AlertasPendientes]
+AS
+SELECT 
+    a.IdAlerta,
+    s.IdSistema,
+    ts.Nombre AS TipoSistema,
+    a.Tipo,
+    a.Mensaje,
+    a.Estado,
+    a.FechaGeneracion
+FROM Alertas a
+JOIN SistemasRenovables s ON a.IdSistema = s.IdSistema
+JOIN TiposSistema ts ON s.IdTipoSistema = ts.IdTipoSistema
+WHERE a.Estado = 'Pendiente';
+GO
+/****** Object:  View [dbo].[vw_TotalMantenimientosAtendidos]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[vw_TotalMantenimientosAtendidos]
+AS
+SELECT COUNT(*) AS TotalMantenimientosAtendidos
+FROM Mantenimientos
+WHERE Estado = 'Completado';
+GO
+/****** Object:  View [dbo].[vw_TiempoPromedioMantenimiento]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[vw_TiempoPromedioMantenimiento]
+AS
+SELECT 
+    AVG(DATEDIFF(HOUR, FechaSolicitud, FechaFin)) AS TiempoPromedioHoras
+FROM Mantenimientos
+WHERE Estado = 'Completado';
+GO
+/****** Object:  View [dbo].[vw_PorcentajeMantenimientosCorrectivos]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[vw_PorcentajeMantenimientosCorrectivos]
+AS
+SELECT 
+    CAST(SUM(CASE WHEN TipoMantenimiento = 'Correctivo' THEN 1 ELSE 0 END) * 100.0 / COUNT(*) AS DECIMAL(5,2)) AS PorcentajeCorrectivo
+FROM Mantenimientos;
+GO
+/****** Object:  Table [dbo].[Usuarios]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Usuarios](
+	[IdUsuario] [int] IDENTITY(1,1) NOT NULL,
+	[IdRol] [int] NOT NULL,
+	[Nombre] [nvarchar](100) NOT NULL,
+	[Email] [nvarchar](100) NOT NULL,
+	[PasswordHash] [nvarchar](256) NOT NULL,
+	[Salt] [nvarchar](128) NOT NULL,
+	[FechaCreacion] [datetime] NULL,
+	[Activo] [bit] NULL,
+	[FechaNacimiento] [date] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[IdUsuario] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[Email] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Tecnicos]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Tecnicos](
+	[IdTecnico] [int] IDENTITY(1,1) NOT NULL,
+	[IdUsuario] [int] NULL,
+	[Especialidad] [nvarchar](100) NULL,
+	[FechaContratacion] [date] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[IdTecnico] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[IdUsuario] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  View [dbo].[vw_VentasPorTecnico]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[vw_VentasPorTecnico]
+AS
+SELECT 
+    t.IdTecnico,
+    u.Nombre AS NombreTecnico,
+    COUNT(DISTINCT v.IdVenta) AS TotalVentas
+FROM Tecnicos t
+JOIN Usuarios u ON t.IdUsuario = u.IdUsuario
+LEFT JOIN Mantenimientos m ON m.IdGrupoTecnico = t.IdTecnico
+LEFT JOIN Ventas v ON v.IdMantenimiento = m.IdMantenimiento
+GROUP BY t.IdTecnico, u.Nombre;
+GO
+/****** Object:  Table [dbo].[DetalleMantenimiento]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[DetalleMantenimiento](
+	[IdDetalle] [int] IDENTITY(1,1) NOT NULL,
+	[IdMantenimiento] [int] NOT NULL,
+	[IdProducto] [int] NOT NULL,
+	[Cantidad] [decimal](10, 2) NOT NULL,
+	[PrecioUnitario] [decimal](12, 2) NOT NULL,
+	[SubTotal]  AS ([Cantidad]*[PrecioUnitario]) PERSISTED,
+ CONSTRAINT [PK__DetalleM__E43646A5905AD4C9] PRIMARY KEY CLUSTERED 
+(
+	[IdDetalle] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Productos]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Productos](
+	[IdProducto] [int] IDENTITY(1,1) NOT NULL,
+	[IdCategoria] [int] NOT NULL,
+	[CodigoSKU] [nvarchar](50) NOT NULL,
+	[Nombre] [nvarchar](100) NOT NULL,
+	[Descripcion] [nvarchar](500) NULL,
+	[PrecioCompra] [decimal](12, 2) NULL,
+	[PrecioVenta] [decimal](12, 2) NOT NULL,
+	[Stock] [int] NOT NULL,
+	[StockMinimo] [int] NULL,
+	[UnidadMedida] [nvarchar](20) NULL,
+	[FechaAlta] [datetime] NULL,
+	[Activo] [bit] NULL,
+	[FrecuenciaMantenimientoRecomendado] [int] NULL,
+	[TiempoVidaUtil] [int] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[IdProducto] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[CodigoSKU] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  View [dbo].[vw_HistorialMantenimientos]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[vw_HistorialMantenimientos]
+AS
+SELECT 
+    c.IdCliente,
+    c.Nombre AS Cliente,
+    s.IdSistema,
+    s.Descripcion AS Sistema,
+    m.IdMantenimiento,
+    m.TipoMantenimiento,
+    m.FechaSolicitud,
+    m.FechaInicio,
+    m.FechaFin,
+    m.Estado,
+    dm.IdProducto,
+    p.Nombre AS Producto,
+    dm.Cantidad,
+    dm.PrecioUnitario,
+    (dm.Cantidad * dm.PrecioUnitario) AS TotalProducto
+FROM Mantenimientos m
+JOIN Clientes c ON m.IdCliente = c.IdCliente
+JOIN SistemasRenovables s ON m.IdSistema = s.IdSistema
+LEFT JOIN DetalleMantenimiento dm ON m.IdMantenimiento = dm.IdMantenimiento
+LEFT JOIN Productos p ON dm.IdProducto = p.IdProducto;
+GO
+/****** Object:  Table [dbo].[__EFMigrationsHistory]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[__EFMigrationsHistory](
+	[MigrationId] [nvarchar](150) NOT NULL,
+	[ProductVersion] [nvarchar](32) NOT NULL,
+ CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY CLUSTERED 
+(
+	[MigrationId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[CategoriasProductos]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[CategoriasProductos](
+	[IdCategoria] [int] IDENTITY(1,1) NOT NULL,
+	[Nombre] [nvarchar](100) NOT NULL,
+	[CategoriaPadre] [int] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[IdCategoria] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Componentes]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Componentes](
+	[IdComponente] [int] IDENTITY(1,1) NOT NULL,
+	[IdTipoComponente] [int] NOT NULL,
+	[Descripcion] [varchar](255) NULL,
+	[CapacidadEnergetica] [decimal](10, 2) NULL,
+	[FechaInstalacion] [date] NULL,
+	[UltimoFechaMantenimiento] [date] NULL,
+	[IdSistema] [int] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[IdComponente] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Comprobantes]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Comprobantes](
+	[IdCliente] [int] NOT NULL,
+	[Tipo] [nvarchar](20) NOT NULL,
+	[Fecha] [datetime] NULL,
+	[Subtotal] [decimal](12, 2) NOT NULL,
+	[Impuestos] [decimal](12, 2) NOT NULL,
+	[Total] [decimal](12, 2) NOT NULL,
+	[IdMantenimiento] [int] NULL,
+	[IdComprobante] [int] IDENTITY(1,1) NOT NULL,
+	[NumeroFactura] [nvarchar](20) NULL,
+ CONSTRAINT [PK_Comprobantes] PRIMARY KEY CLUSTERED 
+(
+	[IdComprobante] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[DetalleComprobante]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[DetalleComprobante](
+	[IdDetalle] [int] IDENTITY(1,1) NOT NULL,
+	[IdComprobante] [int] NOT NULL,
+	[IdProducto] [int] NULL,
+	[Concepto] [nvarchar](255) NOT NULL,
+	[Cantidad] [decimal](10, 2) NOT NULL,
+	[PrecioUnitario] [decimal](12, 2) NOT NULL,
+	[Importe]  AS ([Cantidad]*[PrecioUnitario]) PERSISTED,
+PRIMARY KEY CLUSTERED 
+(
+	[IdDetalle] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[DetalleVenta]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[DetalleVenta](
+	[IdDetalle] [int] IDENTITY(1,1) NOT NULL,
+	[IdVenta] [int] NOT NULL,
+	[IdProducto] [int] NOT NULL,
+	[Cantidad] [decimal](10, 2) NOT NULL,
+	[PrecioUnitario] [decimal](12, 2) NOT NULL,
+	[Importe]  AS ([Cantidad]*[PrecioUnitario]) PERSISTED,
+PRIMARY KEY CLUSTERED 
+(
+	[IdDetalle] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[GruposTecnicos]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[GruposTecnicos](
+	[IdGrupo] [int] IDENTITY(1,1) NOT NULL,
+	[Nombre] [nvarchar](100) NULL,
+	[Responsable] [int] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[IdGrupo] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[MarcasBaterias]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[MarcasBaterias](
+	[IdMarca] [int] IDENTITY(1,1) NOT NULL,
+	[IdTipoSistema] [int] NOT NULL,
+	[NombreMarca] [nvarchar](100) NULL,
+	[NecesitaMantenimiento] [bit] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[IdMarca] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Roles]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Roles](
+	[IdRol] [int] IDENTITY(1,1) NOT NULL,
+	[Nombre] [nvarchar](50) NOT NULL,
+	[Descripcion] [nvarchar](255) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[IdRol] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[Nombre] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[TecnicosGrupos]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[TecnicosGrupos](
+	[IdTecnico] [int] NOT NULL,
+	[IdGrupo] [int] NOT NULL,
+	[FechaAsignacion] [date] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[IdTecnico] ASC,
+	[IdGrupo] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[TipoComponentes]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[TipoComponentes](
+	[IdTipoComponente] [int] IDENTITY(1,1) NOT NULL,
+	[Descripcion] [varchar](100) NOT NULL,
+	[TiempoVida] [int] NULL,
+	[FrecuenciaMantenimientoYear] [decimal](5, 2) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[IdTipoComponente] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[Alertas] ADD  DEFAULT ('Pendiente') FOR [Estado]
+GO
+ALTER TABLE [dbo].[Alertas] ADD  DEFAULT (getdate()) FOR [FechaGeneracion]
+GO
+ALTER TABLE [dbo].[Clientes] ADD  DEFAULT (getdate()) FOR [FechaRegistro]
+GO
+ALTER TABLE [dbo].[Comprobantes] ADD  DEFAULT (getdate()) FOR [Fecha]
+GO
+ALTER TABLE [dbo].[Mantenimientos] ADD  CONSTRAINT [DF__Mantenimi__Fecha__5629CD9C]  DEFAULT (getdate()) FOR [FechaSolicitud]
+GO
+ALTER TABLE [dbo].[Mantenimientos] ADD  CONSTRAINT [DF__Mantenimi__Estad__571DF1D5]  DEFAULT ('Pendiente') FOR [Estado]
+GO
+ALTER TABLE [dbo].[Mantenimientos] ADD  CONSTRAINT [DF_Mantenimientos_RequiereProductos]  DEFAULT ((0)) FOR [RequiereProductos]
+GO
+ALTER TABLE [dbo].[MarcasBaterias] ADD  DEFAULT ((0)) FOR [NecesitaMantenimiento]
+GO
+ALTER TABLE [dbo].[Productos] ADD  DEFAULT ((0)) FOR [Stock]
+GO
+ALTER TABLE [dbo].[Productos] ADD  DEFAULT ((5)) FOR [StockMinimo]
+GO
+ALTER TABLE [dbo].[Productos] ADD  DEFAULT (getdate()) FOR [FechaAlta]
+GO
+ALTER TABLE [dbo].[Productos] ADD  DEFAULT ((1)) FOR [Activo]
+GO
+ALTER TABLE [dbo].[SistemasRenovables] ADD  CONSTRAINT [DF_SistemasRenovables_Estado]  DEFAULT ('Activo') FOR [Estado]
+GO
+ALTER TABLE [dbo].[TecnicosGrupos] ADD  DEFAULT (getdate()) FOR [FechaAsignacion]
+GO
+ALTER TABLE [dbo].[Usuarios] ADD  DEFAULT (getdate()) FOR [FechaCreacion]
+GO
+ALTER TABLE [dbo].[Usuarios] ADD  DEFAULT ((1)) FOR [Activo]
+GO
+ALTER TABLE [dbo].[Ventas] ADD  DEFAULT (getdate()) FOR [Fecha]
+GO
+ALTER TABLE [dbo].[Alertas]  WITH CHECK ADD  CONSTRAINT [FK_Alertas_Sistemas] FOREIGN KEY([IdSistema])
+REFERENCES [dbo].[SistemasRenovables] ([IdSistema])
+GO
+ALTER TABLE [dbo].[Alertas] CHECK CONSTRAINT [FK_Alertas_Sistemas]
+GO
+ALTER TABLE [dbo].[CategoriasProductos]  WITH CHECK ADD  CONSTRAINT [FK_Categorias_CategoriaPadre] FOREIGN KEY([CategoriaPadre])
+REFERENCES [dbo].[CategoriasProductos] ([IdCategoria])
+GO
+ALTER TABLE [dbo].[CategoriasProductos] CHECK CONSTRAINT [FK_Categorias_CategoriaPadre]
+GO
+ALTER TABLE [dbo].[Componentes]  WITH CHECK ADD  CONSTRAINT [FK_Componentes_Sistema] FOREIGN KEY([IdSistema])
+REFERENCES [dbo].[SistemasRenovables] ([IdSistema])
+GO
+ALTER TABLE [dbo].[Componentes] CHECK CONSTRAINT [FK_Componentes_Sistema]
+GO
+ALTER TABLE [dbo].[Componentes]  WITH CHECK ADD  CONSTRAINT [FK_Componentes_TipoComp] FOREIGN KEY([IdTipoComponente])
+REFERENCES [dbo].[TipoComponentes] ([IdTipoComponente])
+GO
+ALTER TABLE [dbo].[Componentes] CHECK CONSTRAINT [FK_Componentes_TipoComp]
+GO
+ALTER TABLE [dbo].[DetalleComprobante]  WITH CHECK ADD  CONSTRAINT [FK_DetalleComprobante_Comprobantes] FOREIGN KEY([IdComprobante])
+REFERENCES [dbo].[Comprobantes] ([IdComprobante])
+GO
+ALTER TABLE [dbo].[DetalleComprobante] CHECK CONSTRAINT [FK_DetalleComprobante_Comprobantes]
+GO
+ALTER TABLE [dbo].[DetalleMantenimiento]  WITH CHECK ADD  CONSTRAINT [FK_DetalleMantenimiento_Mantenimiento] FOREIGN KEY([IdMantenimiento])
+REFERENCES [dbo].[Mantenimientos] ([IdMantenimiento])
+GO
+ALTER TABLE [dbo].[DetalleMantenimiento] CHECK CONSTRAINT [FK_DetalleMantenimiento_Mantenimiento]
+GO
+ALTER TABLE [dbo].[DetalleMantenimiento]  WITH CHECK ADD  CONSTRAINT [FK_DetalleMantenimiento_Producto] FOREIGN KEY([IdProducto])
+REFERENCES [dbo].[Productos] ([IdProducto])
+GO
+ALTER TABLE [dbo].[DetalleMantenimiento] CHECK CONSTRAINT [FK_DetalleMantenimiento_Producto]
+GO
+ALTER TABLE [dbo].[DetalleVenta]  WITH CHECK ADD  CONSTRAINT [FK_DetalleVenta_Productos] FOREIGN KEY([IdProducto])
+REFERENCES [dbo].[Productos] ([IdProducto])
+GO
+ALTER TABLE [dbo].[DetalleVenta] CHECK CONSTRAINT [FK_DetalleVenta_Productos]
+GO
+ALTER TABLE [dbo].[DetalleVenta]  WITH CHECK ADD  CONSTRAINT [FK_DetalleVenta_Ventas] FOREIGN KEY([IdVenta])
+REFERENCES [dbo].[Ventas] ([IdVenta])
+GO
+ALTER TABLE [dbo].[DetalleVenta] CHECK CONSTRAINT [FK_DetalleVenta_Ventas]
+GO
+ALTER TABLE [dbo].[GruposTecnicos]  WITH CHECK ADD  CONSTRAINT [FK_Grupos_Tecnicos] FOREIGN KEY([Responsable])
+REFERENCES [dbo].[Tecnicos] ([IdTecnico])
+GO
+ALTER TABLE [dbo].[GruposTecnicos] CHECK CONSTRAINT [FK_Grupos_Tecnicos]
+GO
+ALTER TABLE [dbo].[Mantenimientos]  WITH CHECK ADD  CONSTRAINT [FK_Mantenimientos_Clientes] FOREIGN KEY([IdCliente])
+REFERENCES [dbo].[Clientes] ([IdCliente])
+GO
+ALTER TABLE [dbo].[Mantenimientos] CHECK CONSTRAINT [FK_Mantenimientos_Clientes]
+GO
+ALTER TABLE [dbo].[Mantenimientos]  WITH CHECK ADD  CONSTRAINT [FK_Mantenimientos_Sistemas] FOREIGN KEY([IdSistema])
+REFERENCES [dbo].[SistemasRenovables] ([IdSistema])
+GO
+ALTER TABLE [dbo].[Mantenimientos] CHECK CONSTRAINT [FK_Mantenimientos_Sistemas]
+GO
+ALTER TABLE [dbo].[MarcasBaterias]  WITH CHECK ADD  CONSTRAINT [FK_MarcasBaterias_Tipos] FOREIGN KEY([IdTipoSistema])
+REFERENCES [dbo].[TiposSistema] ([IdTipoSistema])
+GO
+ALTER TABLE [dbo].[MarcasBaterias] CHECK CONSTRAINT [FK_MarcasBaterias_Tipos]
+GO
+ALTER TABLE [dbo].[Productos]  WITH CHECK ADD  CONSTRAINT [FK_Productos_Categorias] FOREIGN KEY([IdCategoria])
+REFERENCES [dbo].[CategoriasProductos] ([IdCategoria])
+GO
+ALTER TABLE [dbo].[Productos] CHECK CONSTRAINT [FK_Productos_Categorias]
+GO
+ALTER TABLE [dbo].[SistemasRenovables]  WITH CHECK ADD  CONSTRAINT [FK_Sistemas_Clientes] FOREIGN KEY([IdCliente])
+REFERENCES [dbo].[Clientes] ([IdCliente])
+GO
+ALTER TABLE [dbo].[SistemasRenovables] CHECK CONSTRAINT [FK_Sistemas_Clientes]
+GO
+ALTER TABLE [dbo].[SistemasRenovables]  WITH CHECK ADD  CONSTRAINT [FK_Sistemas_Tipos] FOREIGN KEY([IdTipoSistema])
+REFERENCES [dbo].[TiposSistema] ([IdTipoSistema])
+GO
+ALTER TABLE [dbo].[SistemasRenovables] CHECK CONSTRAINT [FK_Sistemas_Tipos]
+GO
+ALTER TABLE [dbo].[Tecnicos]  WITH CHECK ADD  CONSTRAINT [FK_Tecnicos_Usuarios] FOREIGN KEY([IdUsuario])
+REFERENCES [dbo].[Usuarios] ([IdUsuario])
+GO
+ALTER TABLE [dbo].[Tecnicos] CHECK CONSTRAINT [FK_Tecnicos_Usuarios]
+GO
+ALTER TABLE [dbo].[TecnicosGrupos]  WITH CHECK ADD  CONSTRAINT [FK_TecnicosGrupos_Grupo] FOREIGN KEY([IdGrupo])
+REFERENCES [dbo].[GruposTecnicos] ([IdGrupo])
+GO
+ALTER TABLE [dbo].[TecnicosGrupos] CHECK CONSTRAINT [FK_TecnicosGrupos_Grupo]
+GO
+ALTER TABLE [dbo].[TecnicosGrupos]  WITH CHECK ADD  CONSTRAINT [FK_TecnicosGrupos_Tecnico] FOREIGN KEY([IdTecnico])
+REFERENCES [dbo].[Tecnicos] ([IdTecnico])
+GO
+ALTER TABLE [dbo].[TecnicosGrupos] CHECK CONSTRAINT [FK_TecnicosGrupos_Tecnico]
+GO
+ALTER TABLE [dbo].[Usuarios]  WITH CHECK ADD  CONSTRAINT [FK_Usuarios_Roles] FOREIGN KEY([IdRol])
+REFERENCES [dbo].[Roles] ([IdRol])
+GO
+ALTER TABLE [dbo].[Usuarios] CHECK CONSTRAINT [FK_Usuarios_Roles]
+GO
+ALTER TABLE [dbo].[Ventas]  WITH CHECK ADD  CONSTRAINT [FK_Ventas_Clientes] FOREIGN KEY([IdCliente])
+REFERENCES [dbo].[Clientes] ([IdCliente])
+GO
+ALTER TABLE [dbo].[Ventas] CHECK CONSTRAINT [FK_Ventas_Clientes]
+GO
+ALTER TABLE [dbo].[Ventas]  WITH CHECK ADD  CONSTRAINT [FK_Ventas_Mantenimientos] FOREIGN KEY([IdMantenimiento])
+REFERENCES [dbo].[Mantenimientos] ([IdMantenimiento])
+GO
+ALTER TABLE [dbo].[Ventas] CHECK CONSTRAINT [FK_Ventas_Mantenimientos]
+GO
+/****** Object:  StoredProcedure [dbo].[sp_ActualizarCliente]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- Actualizar cliente
+CREATE PROCEDURE [dbo].[sp_ActualizarCliente]
+    @IdCliente INT,
+    @Nombre NVARCHAR(100),
+    @Email NVARCHAR(100),
+    @Telefono NVARCHAR(15) = NULL,
+    @Direccion NVARCHAR(255) = NULL,
+    @RFC NVARCHAR(20) = NULL
+AS
+BEGIN
+    UPDATE Clientes
+    SET Nombre = @Nombre,
+        Email = @Email,
+        Telefono = @Telefono,
+        Direccion = @Direccion,
+        RFC = @RFC,
+        FechaUltimaActualizacion = GETDATE()
+    WHERE IdCliente = @IdCliente;
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[sp_ActualizarMantenimiento]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- Actualizar mantenimiento (cambiar estado, agregar trabajos realizados y costo)
+CREATE PROCEDURE [dbo].[sp_ActualizarMantenimiento]
+    @IdMantenimiento INT,
+    @FechaInicio DATETIME = NULL,
+    @FechaFin DATETIME = NULL,
+    @Estado NVARCHAR(20) = NULL,
+    @TrabajosRealizados NVARCHAR(MAX) = NULL,
+    @CostoTotal DECIMAL(12,2) = NULL
+AS
+BEGIN
+    UPDATE Mantenimientos
+    SET FechaInicio = COALESCE(@FechaInicio, FechaInicio),
+        FechaFin = COALESCE(@FechaFin, FechaFin),
+        Estado = COALESCE(@Estado, Estado),
+        TrabajosRealizados = COALESCE(@TrabajosRealizados, TrabajosRealizados),
+        CostoTotal = COALESCE(@CostoTotal, CostoTotal)
+    WHERE IdMantenimiento = @IdMantenimiento;
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[sp_ActualizarProducto]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- Actualizar producto
+CREATE PROCEDURE [dbo].[sp_ActualizarProducto]
+    @IdProducto INT,
+    @IdCategoria INT,
+    @CodigoSKU NVARCHAR(50),
+    @Nombre NVARCHAR(100),
+    @Descripcion NVARCHAR(500) = NULL,
+    @PrecioCompra DECIMAL(12,2) = NULL,
+    @PrecioVenta DECIMAL(12,2),
+    @Stock INT,
+    @StockMinimo INT = 5,
+    @UnidadMedida NVARCHAR(20) = NULL,
+    @Activo BIT = 1
+AS
+BEGIN
+    UPDATE Productos
+    SET IdCategoria = @IdCategoria,
+        CodigoSKU = @CodigoSKU,
+        Nombre = @Nombre,
+        Descripcion = @Descripcion,
+        PrecioCompra = @PrecioCompra,
+        PrecioVenta = @PrecioVenta,
+        Stock = @Stock,
+        StockMinimo = @StockMinimo,
+        UnidadMedida = @UnidadMedida,
+        Activo = @Activo
+    WHERE IdProducto = @IdProducto;
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[sp_AgregarDetalleMantenimiento]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- Agregar detalle de mantenimiento
+CREATE PROCEDURE [dbo].[sp_AgregarDetalleMantenimiento]
+    @IdMantenimiento INT,
+    @IdProducto INT,
+    @Cantidad DECIMAL(10,2),
+    @PrecioUnitario DECIMAL(12,2)
+AS
+BEGIN
+    INSERT INTO DetalleMantenimiento (IdMantenimiento, IdProducto, Cantidad, PrecioUnitario)
+    VALUES (@IdMantenimiento, @IdProducto, @Cantidad, @PrecioUnitario);
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[sp_AgregarDetalleVenta]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- Agregar detalle de venta
+CREATE PROCEDURE [dbo].[sp_AgregarDetalleVenta]
+    @IdVenta INT,
+    @IdProducto INT,
+    @Cantidad DECIMAL(10,2),
+    @PrecioUnitario DECIMAL(12,2)
+AS
+BEGIN
+    INSERT INTO DetalleVenta (IdVenta, IdProducto, Cantidad, PrecioUnitario)
+    VALUES (@IdVenta, @IdProducto, @Cantidad, @PrecioUnitario);
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[sp_CrearCliente]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- Crear cliente
+CREATE PROCEDURE [dbo].[sp_CrearCliente]
+    @Nombre NVARCHAR(100),
+    @Email NVARCHAR(100),
+    @Telefono NVARCHAR(15) = NULL,
+    @Direccion NVARCHAR(255) = NULL,
+    @RFC NVARCHAR(20) = NULL
+AS
+BEGIN
+    INSERT INTO Clientes (Nombre, Email, Telefono, Direccion, RFC, FechaRegistro)
+    VALUES (@Nombre, @Email, @Telefono, @Direccion, @RFC, GETDATE());
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[sp_CrearMantenimiento]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- Crear mantenimiento
+CREATE PROCEDURE [dbo].[sp_CrearMantenimiento]
+    @IdSistema INT,
+    @IdCliente INT,
+    @IdGrupoTecnico INT = NULL,
+    @TipoMantenimiento NVARCHAR(20),
+    @FechaProgramada DATETIME = NULL,
+    @Observaciones NVARCHAR(MAX) = NULL
+AS
+BEGIN
+    INSERT INTO Mantenimientos (IdSistema, IdCliente, IdGrupoTecnico, TipoMantenimiento, FechaProgramada, Estado, Observaciones)
+    VALUES (@IdSistema, @IdCliente, @IdGrupoTecnico, @TipoMantenimiento, @FechaProgramada, 'Pendiente', @Observaciones);
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[sp_CrearProducto]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- Crear producto
+CREATE PROCEDURE [dbo].[sp_CrearProducto]
+    @IdCategoria INT,
+    @CodigoSKU NVARCHAR(50),
+    @Nombre NVARCHAR(100),
+    @Descripcion NVARCHAR(500) = NULL,
+    @PrecioCompra DECIMAL(12,2) = NULL,
+    @PrecioVenta DECIMAL(12,2),
+    @Stock INT = 0,
+    @StockMinimo INT = 5,
+    @UnidadMedida NVARCHAR(20) = NULL
+AS
+BEGIN
+    INSERT INTO Productos (IdCategoria, CodigoSKU, Nombre, Descripcion, PrecioCompra, PrecioVenta, Stock, StockMinimo, UnidadMedida, FechaAlta, Activo)
+    VALUES (@IdCategoria, @CodigoSKU, @Nombre, @Descripcion, @PrecioCompra, @PrecioVenta, @Stock, @StockMinimo, @UnidadMedida, GETDATE(), 1);
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[sp_CrearVenta]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- Crear venta
+CREATE PROCEDURE [dbo].[sp_CrearVenta]
+    @IdCliente INT,
+    @Total DECIMAL(12,2),
+    @IdMantenimiento INT = NULL
+AS
+BEGIN
+    INSERT INTO Ventas (IdCliente, Total, Fecha, IdMantenimiento)
+    VALUES (@IdCliente, @Total, GETDATE(), @IdMantenimiento);
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[sp_EliminarCliente]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- Eliminar cliente
+CREATE PROCEDURE [dbo].[sp_EliminarCliente]
+    @IdCliente INT
+AS
+BEGIN
+    DELETE FROM Clientes WHERE IdCliente = @IdCliente;
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[sp_EliminarDetalleMantenimiento]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- Eliminar detalle de mantenimiento
+CREATE PROCEDURE [dbo].[sp_EliminarDetalleMantenimiento]
+    @IdDetalle INT
+AS
+BEGIN
+    DELETE FROM DetalleMantenimiento
+    WHERE IdDetalle = @IdDetalle;
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[sp_EliminarDetalleVenta]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- Eliminar detalle de venta
+CREATE PROCEDURE [dbo].[sp_EliminarDetalleVenta]
+    @IdDetalle INT
+AS
+BEGIN
+    DELETE FROM DetalleVenta
+    WHERE IdDetalle = @IdDetalle;
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[sp_GenerarAlertasMantenimiento]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[sp_GenerarAlertasMantenimiento]
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- 1. Alertas para paneles solares (3 meses)
+    INSERT INTO Alertas (IdSistema, Tipo, Mensaje, Estado, FechaGeneracion)
+    SELECT 
+        s.IdSistema,
+        'Mantenimiento',
+        'El mantenimiento del sistema está próximo.',
+        'Pendiente',
+        GETDATE()
+    FROM SistemasRenovables s
+    JOIN TiposSistema ts ON s.IdTipoSistema = ts.IdTipoSistema
+    WHERE ts.Nombre = 'Panel Solar'
+      AND DATEDIFF(MONTH, s.UltimoMantenimiento, GETDATE()) >= 3;
+
+    -- 2. Alertas para baterías (según marca y 48 meses)
+    INSERT INTO Alertas (IdSistema, Tipo, Mensaje, Estado, FechaGeneracion)
+    SELECT 
+        s.IdSistema,
+        'Batería',
+        'La batería necesita mantenimiento según la marca o tiempo de uso.',
+        'Pendiente',
+        GETDATE()
+    FROM SistemasRenovables s
+    JOIN TiposSistema ts ON s.IdTipoSistema = ts.IdTipoSistema
+    JOIN MarcasBaterias mb ON ts.IdTipoSistema = mb.IdTipoSistema
+    WHERE ts.Nombre = 'Batería'
+      AND (DATEDIFF(MONTH, s.UltimoMantenimiento, GETDATE()) >= 48
+           OR mb.NecesitaMantenimiento = 1);
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[sp_GenerarComprobante]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[sp_GenerarComprobante]
+    @IdMantenimiento INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @IdCliente INT;
+    DECLARE @Subtotal DECIMAL(12,2);
+    DECLARE @Impuestos DECIMAL(12,2);
+    DECLARE @Total DECIMAL(12,2);
+    DECLARE @IdComprobante INT;
+
+    -- Obtener el cliente asociado al mantenimiento
+    SELECT @IdCliente = IdCliente
+    FROM Mantenimientos
+    WHERE IdMantenimiento = @IdMantenimiento;
+
+    -- Calcular subtotal de los productos usados en mantenimiento
+    SELECT @Subtotal = SUM(Cantidad * PrecioUnitario)
+    FROM DetalleMantenimiento
+    WHERE IdMantenimiento = @IdMantenimiento;
+
+    SET @Impuestos = @Subtotal * 0.18; -- ejemplo 18% IGV
+    SET @Total = @Subtotal + @Impuestos;
+
+    -- Insertar el comprobante
+    INSERT INTO Comprobantes (IdCliente, Tipo, Subtotal, Impuestos, Total, IdMantenimiento)
+    VALUES (@IdCliente, 'Mantenimiento', @Subtotal, @Impuestos, @Total, @IdMantenimiento);
+
+    SET @IdComprobante = SCOPE_IDENTITY();
+
+    -- Insertar detalle del comprobante
+    INSERT INTO DetalleComprobante (IdComprobante, IdProducto, Concepto, Cantidad, PrecioUnitario)
+    SELECT NULL, dm.IdProducto, p.Nombre, dm.Cantidad, dm.PrecioUnitario
+    FROM DetalleMantenimiento dm
+    JOIN Productos p ON dm.IdProducto = p.IdProducto
+    WHERE dm.IdMantenimiento = @IdMantenimiento;
+
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[sp_ResolverAlerta]    Script Date: 1/10/2025 21:49:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[sp_ResolverAlerta]
+    @IdAlerta INT
+AS
+BEGIN
+    UPDATE Alertas
+    SET Estado = 'Resuelta',
+        FechaResolucion = GETDATE()
+    WHERE IdAlerta = @IdAlerta;
+END;
+GO
+USE [master]
+GO
+ALTER DATABASE [master] SET  READ_WRITE 
+GO

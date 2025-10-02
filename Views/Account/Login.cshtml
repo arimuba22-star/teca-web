@@ -1,0 +1,64 @@
+﻿@{
+    ViewData["Title"] = "Iniciar Sesión";
+}
+
+<div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="card shadow p-4" style="width: 400px;">
+        <h3 class="text-center mb-4" style="color: var(--primary-color); font-weight: bold;">
+            Plataforma Web de Gestión TECA
+        </h3>
+
+        <form method="post" asp-action="Login" asp-controller="Account">
+            <div class="mb-3">
+                <label class="form-label">Correo electrónico</label>
+                <input type="email" name="email" class="form-control" placeholder="ejemplo@correo.com" required />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Contraseña</label>
+                <div class="input-group">
+                    <input type="password" id="password" name="password" class="form-control" placeholder="********" required />
+                    <button type="button" class="btn btn-outline-secondary" onclick="togglePassword()">
+                        <i class="fa fa-eye" id="toggleIcon"></i>
+                    </button>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-outline-dark w-100">
+                <i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión
+            </button>
+        </form>
+
+        <!-- Opciones adicionales -->
+        <div class="text-center mt-3">
+            <a asp-action="ForgotPassword" asp-controller="Account" class="text-decoration-none" style="color: var(--primary-color);">
+                ¿Olvidaste tu contraseña?
+            </a>
+        </div>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger mt-3 text-center">
+                @ViewBag.Error
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function togglePassword() {
+            var input = document.getElementById("password");
+            var icon = document.getElementById("toggleIcon");
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        }
+    </script>
+}
