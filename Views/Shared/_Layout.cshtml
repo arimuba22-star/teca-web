@@ -8,6 +8,8 @@
 
     bool esLogin = currentController == "Account" && currentAction == "Login";
     bool haySesion = !string.IsNullOrEmpty(usuario);
+    var rol = HttpContextAccessor.HttpContext?.Session.GetString("Rol");
+    bool esAdmin = rol == "Administrador"; // Asegúrate de que coincida con el nombre en tu base de datos
 }
 
 <!DOCTYPE html>
@@ -114,10 +116,14 @@
                         <a class="nav-link text-white" asp-controller="Ventas" asp-action="Index"><i class="fa-solid fa-receipt"></i> Ventas</a>
                         <a class="nav-link text-white" asp-controller="Mantenimientos" asp-action="Index"><i class="fa-solid fa-tools"></i> Mantenimientos</a>
                         <a class="nav-link text-white" asp-controller="Reportes" asp-action="Index"><i class="fa-solid fa-chart-line"></i> Reportes</a>
-                        <a class="nav-link text-white" asp-controller="Usuarios" asp-action="Index"><i class="fa-solid fa-user-gear"></i> Usuarios</a>
-                        <a class="nav-link text-white" asp-controller="SistemasRenovables" asp-action="Index"><i class="fa-solid fa-user-gear"></i> SistemasRenovables</a>
-                        <a class="nav-link text-white" asp-controller="CalendarioAlertas" asp-action="Index"><i class="fa-solid fa-user-gear"></i> Calendario Alertas</a>
-                        
+
+                        @if (esAdmin)
+                        {
+                            <a class="nav-link text-white" asp-controller="Usuarios" asp-action="Index"><i class="fa-solid fa-user-gear"></i> Usuarios</a>
+                        }
+
+                        <a class="nav-link text-white" asp-controller="SistemasRenovables" asp-action="Index"><i class="fa-solid fa-solar-panel"></i> Sistemas Renovables</a>
+                        <a class="nav-link text-white" asp-controller="CalendarioAlertas" asp-action="Index"><i class="fa-solid fa-calendar-days"></i> Calendario Alertas</a>
                     </nav>
                 </div>
             </aside>

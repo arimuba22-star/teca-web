@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SWebEnergia.Models;
 using SWebEnergia.Security;
-using System.Net.Mail;
 using System.Net;
+using System.Net.Mail;
 
 namespace SWebEnergia.Controllers
 {
@@ -22,10 +23,13 @@ namespace SWebEnergia.Controllers
         public IActionResult Login() => View();
 
         // POST: Login
+        // POST: Login
         [HttpPost]
         public IActionResult Login(string email, string password)
         {
+            // Incluimos el rol para poder usar su nombre
             var usuario = _context.Usuarios
+                .Include(u => u.IdRolNavigation) // 👈 necesario para obtener el nombre del rol
                 .FirstOrDefault(u => (u.Email == email || u.Nombre == email) && u.Activo != false);
 
             if (usuario == null)
@@ -40,13 +44,17 @@ namespace SWebEnergia.Controllers
                 return View();
             }
 
+            // Guardamos en sesión
             HttpContext.Session.SetString("Usuario", usuario.Nombre);
             HttpContext.Session.SetInt32("IdUsuario", usuario.IdUsuario);
             HttpContext.Session.SetInt32("IdRol", usuario.IdRol);
 
+            // 👇 NUEVO: guardamos también el nombre del rol (ej. "Administrador")
+            if (usuario.IdRolNavigation != null)
+                HttpContext.Session.SetString("Rol", usuario.IdRolNavigation.Nombre);
+
             return RedirectToAction("Index", "Home");
         }
-
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();

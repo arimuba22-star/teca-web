@@ -36,13 +36,13 @@
 
     <div class="mb-3 d-flex gap-2">
         @* Botones de Exportar Ventas *@
-        <a asp-controller="Reportes" asp-action="ExportarExcel"
+       @*  <a asp-controller="Reportes" asp-action="ExportarExcel"
            asp-route-cliente="@Context.Request.Query["cliente"]"
            asp-route-desde="@Context.Request.Query["desde"]"
            asp-route-hasta="@Context.Request.Query["hasta"]"
            class="btn btn-success">
             <i class="fa fa-file-excel"></i> Exportar Ventas Excel
-        </a>
+        </a> *@
 
         <a asp-controller="Reportes" asp-action="ExportarPDF"
            asp-route-cliente="@Context.Request.Query["cliente"]"
@@ -53,13 +53,13 @@
         </a>
 
         @* Botones de Exportar Mantenimientos (Nuevos) *@
-        <a asp-controller="Reportes" asp-action="ExportarExcelMantenimientos"
+       @*  <a asp-controller="Reportes" asp-action="ExportarExcelMantenimientos"
            asp-route-cliente="@Context.Request.Query["cliente"]"
            asp-route-desde="@Context.Request.Query["desde"]"
            asp-route-hasta="@Context.Request.Query["hasta"]"
            class="btn btn-success">
             <i class="fa fa-file-excel"></i> Exportar Mant. Excel
-        </a>
+        </a> *@
 
         <a asp-controller="Reportes" asp-action="ExportarPDFMantenimientos"
            asp-route-cliente="@Context.Request.Query["cliente"]"
