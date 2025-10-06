@@ -1,0 +1,190 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\teca-web\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{095E3DDE-41E0-D358-EA2E-60BC2C0F56D0}|SWebEnergia.csproj|c:\\teca-web\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{095E3DDE-41E0-D358-EA2E-60BC2C0F56D0}|SWebEnergia.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{095E3DDE-41E0-D358-EA2E-60BC2C0F56D0}|SWebEnergia.csproj|c:\\teca-web\\.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{095E3DDE-41E0-D358-EA2E-60BC2C0F56D0}|SWebEnergia.csproj|solutionrelative:.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{095E3DDE-41E0-D358-EA2E-60BC2C0F56D0}|SWebEnergia.csproj|c:\\teca-web\\views\\mantenimientos\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{095E3DDE-41E0-D358-EA2E-60BC2C0F56D0}|SWebEnergia.csproj|solutionrelative:views\\mantenimientos\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{095E3DDE-41E0-D358-EA2E-60BC2C0F56D0}|SWebEnergia.csproj|c:\\teca-web\\views\\mantenimientos\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{095E3DDE-41E0-D358-EA2E-60BC2C0F56D0}|SWebEnergia.csproj|solutionrelative:views\\mantenimientos\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{095E3DDE-41E0-D358-EA2E-60BC2C0F56D0}|SWebEnergia.csproj|c:\\teca-web\\views\\mantenimientos\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{095E3DDE-41E0-D358-EA2E-60BC2C0F56D0}|SWebEnergia.csproj|solutionrelative:views\\mantenimientos\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{095E3DDE-41E0-D358-EA2E-60BC2C0F56D0}|SWebEnergia.csproj|c:\\teca-web\\controllers\\mantenimientoscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{095E3DDE-41E0-D358-EA2E-60BC2C0F56D0}|SWebEnergia.csproj|solutionrelative:controllers\\mantenimientoscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{095E3DDE-41E0-D358-EA2E-60BC2C0F56D0}|SWebEnergia.csproj|c:\\teca-web\\models\\mantenimiento.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{095E3DDE-41E0-D358-EA2E-60BC2C0F56D0}|SWebEnergia.csproj|solutionrelative:models\\mantenimiento.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{095E3DDE-41E0-D358-EA2E-60BC2C0F56D0}|SWebEnergia.csproj|c:\\teca-web\\models\\viewmodels\\detallemantenimientoviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{095E3DDE-41E0-D358-EA2E-60BC2C0F56D0}|SWebEnergia.csproj|solutionrelative:models\\viewmodels\\detallemantenimientoviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{095E3DDE-41E0-D358-EA2E-60BC2C0F56D0}|SWebEnergia.csproj|c:\\teca-web\\models\\viewmodels\\mantenimientoviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{095E3DDE-41E0-D358-EA2E-60BC2C0F56D0}|SWebEnergia.csproj|solutionrelative:models\\viewmodels\\mantenimientoviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{095E3DDE-41E0-D358-EA2E-60BC2C0F56D0}|SWebEnergia.csproj|c:\\teca-web\\controllers\\ventascontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{095E3DDE-41E0-D358-EA2E-60BC2C0F56D0}|SWebEnergia.csproj|solutionrelative:controllers\\ventascontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\teca-web\\appsettings.json",
+              "RelativeDocumentMoniker": "appsettings.json",
+              "ToolTip": "C:\\teca-web\\appsettings.json",
+              "RelativeToolTip": "appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-10-06T05:38:14.982Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": ".gitignore",
+              "DocumentMoniker": "C:\\teca-web\\.gitignore",
+              "RelativeDocumentMoniker": ".gitignore",
+              "ToolTip": "C:\\teca-web\\.gitignore",
+              "RelativeToolTip": ".gitignore",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-10-06T05:38:11.231Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Details.cshtml",
+              "DocumentMoniker": "C:\\teca-web\\Views\\Mantenimientos\\Details.cshtml",
+              "RelativeDocumentMoniker": "Views\\Mantenimientos\\Details.cshtml",
+              "ToolTip": "C:\\teca-web\\Views\\Mantenimientos\\Details.cshtml",
+              "RelativeToolTip": "Views\\Mantenimientos\\Details.cshtml",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAqwBMAAABHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-10-06T04:58:18.244Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Edit.cshtml",
+              "DocumentMoniker": "C:\\teca-web\\Views\\Mantenimientos\\Edit.cshtml",
+              "RelativeDocumentMoniker": "Views\\Mantenimientos\\Edit.cshtml",
+              "ToolTip": "C:\\teca-web\\Views\\Mantenimientos\\Edit.cshtml",
+              "RelativeToolTip": "Views\\Mantenimientos\\Edit.cshtml",
+              "ViewState": "AgIAAHEAAAAAAAAAAAAowEkAAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-10-06T04:56:53.101Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Create.cshtml",
+              "DocumentMoniker": "C:\\teca-web\\Views\\Mantenimientos\\Create.cshtml",
+              "RelativeDocumentMoniker": "Views\\Mantenimientos\\Create.cshtml",
+              "ToolTip": "C:\\teca-web\\Views\\Mantenimientos\\Create.cshtml",
+              "RelativeToolTip": "Views\\Mantenimientos\\Create.cshtml",
+              "ViewState": "AgIAAHAAAAAAAAAAAAAkwHcAAABRAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-10-06T04:50:54.116Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Mantenimiento.cs",
+              "DocumentMoniker": "C:\\teca-web\\Models\\Mantenimiento.cs",
+              "RelativeDocumentMoniker": "Models\\Mantenimiento.cs",
+              "ToolTip": "C:\\teca-web\\Models\\Mantenimiento.cs",
+              "RelativeToolTip": "Models\\Mantenimiento.cs",
+              "ViewState": "AgIAACgAAAAAAAAAAAA6wDIAAABGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-06T04:44:08.808Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "DetalleMantenimientoViewModel.cs",
+              "DocumentMoniker": "C:\\teca-web\\Models\\ViewModels\\DetalleMantenimientoViewModel.cs",
+              "RelativeDocumentMoniker": "Models\\ViewModels\\DetalleMantenimientoViewModel.cs",
+              "ToolTip": "C:\\teca-web\\Models\\ViewModels\\DetalleMantenimientoViewModel.cs",
+              "RelativeToolTip": "Models\\ViewModels\\DetalleMantenimientoViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-06T04:43:47.59Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "MantenimientoViewModel.cs",
+              "DocumentMoniker": "C:\\teca-web\\Models\\ViewModels\\MantenimientoViewModel.cs",
+              "RelativeDocumentMoniker": "Models\\ViewModels\\MantenimientoViewModel.cs",
+              "ToolTip": "C:\\teca-web\\Models\\ViewModels\\MantenimientoViewModel.cs",
+              "RelativeToolTip": "Models\\ViewModels\\MantenimientoViewModel.cs",
+              "ViewState": "AgIAABgAAAAAAAAAAAA2wCMAAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-06T04:43:26.086Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "VentasController.cs",
+              "DocumentMoniker": "C:\\teca-web\\Controllers\\VentasController.cs",
+              "RelativeDocumentMoniker": "Controllers\\VentasController.cs",
+              "ToolTip": "C:\\teca-web\\Controllers\\VentasController.cs",
+              "RelativeToolTip": "Controllers\\VentasController.cs",
+              "ViewState": "AgIAAMkAAAAAAAAAAAAmwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-06T04:40:40.241Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "MantenimientosController.cs",
+              "DocumentMoniker": "C:\\teca-web\\Controllers\\MantenimientosController.cs",
+              "RelativeDocumentMoniker": "Controllers\\MantenimientosController.cs",
+              "ToolTip": "C:\\teca-web\\Controllers\\MantenimientosController.cs",
+              "RelativeToolTip": "Controllers\\MantenimientosController.cs",
+              "ViewState": "AgIAAGECAAAAAAAAAAAiwHUCAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-06T04:35:50.08Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

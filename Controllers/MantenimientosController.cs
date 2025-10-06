@@ -271,6 +271,19 @@ namespace SWebEnergia.Controllers
             var pdfBytes = msOutput.ToArray();
             return File(pdfBytes, "application/pdf");
         }
+
+        private string DeterminarTipoComprobante(string? numeroDocumento)
+        {
+            if (!string.IsNullOrEmpty(numeroDocumento))
+            {
+                if (numeroDocumento.Length == 8)
+                    return "Boleta";
+                else if (numeroDocumento.Length == 11)
+                    return "Factura";
+            }
+            return "Factura";
+        }
+
         public async Task<IActionResult> GenerarComprobante(int id, string tipoComprobante)
         {
             var mantenimiento = await _context.Mantenimientos
@@ -290,17 +303,38 @@ namespace SWebEnergia.Controllers
             decimal impuestos = subtotal * 0.18m;
             decimal total = subtotal + impuestos;
 
+            // Obtener cliente
+            var cliente = await _context.Clientes.FindAsync(mantenimiento.IdCliente);
+
+            // Determinar tipo de comprobante automáticamente si no se proporciona
+            string tipo = tipoComprobante;
+            if (string.IsNullOrWhiteSpace(tipoComprobante))
+            {
+                if (!string.IsNullOrEmpty(cliente?.NDocumento))
+                {
+                    if (cliente.NDocumento.Length == 8)
+                        tipo = "Boleta";
+                    else if (cliente.NDocumento.Length == 11)
+                        tipo = "Factura";
+                }
+                else
+                {
+                    tipo = "Factura"; // fallback
+                }
+            }
+
             var comprobante = new Comprobante
             {
                 IdCliente = mantenimiento.IdCliente,
-                Tipo = string.IsNullOrWhiteSpace(tipoComprobante) ? "Factura" : tipoComprobante,
+                Tipo = tipo,
                 Fecha = DateTime.Now,
                 Subtotal = subtotal,
                 Impuestos = impuestos,
                 Total = total,
                 IdMantenimiento = mantenimiento.IdMantenimiento,
-                NumeroFactura = GenerarNumeroFactura() // <-- Aquí generamos el número automáticamente
+                NumeroFactura = GenerarNumeroFactura()
             };
+
 
             _context.Comprobantes.Add(comprobante);
             await _context.SaveChangesAsync();
@@ -570,16 +604,29 @@ namespace SWebEnergia.Controllers
             decimal impuestos = subtotal * 0.18m;
             decimal total = subtotal + impuestos;
 
+            var cliente = await _context.Clientes.FindAsync(mantenimiento.IdCliente);
+
+            // Determinar tipo de comprobante según número de documento
+            string tipoComprobante = "Factura"; // por defecto
+            if (!string.IsNullOrEmpty(cliente?.NDocumento))
+            {
+                if (cliente.NDocumento.Length == 8)
+                    tipoComprobante = "Boleta";
+                else if (cliente.NDocumento.Length == 11)
+                    tipoComprobante = "Factura";
+            }
+
+            // Crear el comprobante
             var comprobante = new Comprobante
             {
                 IdCliente = mantenimiento.IdCliente,
-                Tipo = string.IsNullOrWhiteSpace(vm.TipoComprobante) ? "Factura" : vm.TipoComprobante,
+                Tipo = DeterminarTipoComprobante(cliente?.NDocumento),
                 Fecha = DateTime.Now,
                 Subtotal = subtotal,
                 Impuestos = impuestos,
                 Total = total,
                 IdMantenimiento = mantenimiento.IdMantenimiento,
-                NumeroFactura = GenerarNumeroFactura()  // <--- Aquí asignas el número generado
+                NumeroFactura = GenerarNumeroFactura()
             };
 
             _context.Comprobantes.Add(comprobante);

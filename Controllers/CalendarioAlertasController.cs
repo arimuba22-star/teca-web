@@ -193,106 +193,187 @@ namespace SWebEnergia.Controllers
                 }
             }
 
-
-            // LÓGICA 2: ALERTA DE VENCIMIENTO DE PRODUCTOS (Basado en Producto.VidaUtil y SistemasRenovables.FechaInstalacion) ⚠️
+            // --------------------------------------------------------------------------------
+            // LÓGICA 2: ALERTA DE VENCIMIENTO DE COMPONENTES (basado en TipoComponentes.TiempoVida)
             // --------------------------------------------------------------------------------
 
-            _logger.LogInformation("Iniciando la verificación de tiempo de vida útil de productos (basado en Venta/Sistema).");
-            var diasAlertaVencimientoProducto = 90; // Alertar 90 días antes del fin de vida útil
-            var fechaLimiteAlerta = fechaActual.AddDays(diasAlertaVencimientoProducto);
+            _logger.LogInformation("Iniciando verificación de vida útil de componentes instalados.");
 
-            // Consulta: Busca productos vendidos a clientes que tengan sistemas renovables
-            var productosVendidosConSistema = await _context.DetalleVenta
-                .Include(dv => dv.IdVentaNavigation)
-                .ThenInclude(v => v.IdClienteNavigation)
-                .Include(dv => dv.IdProductoNavigation) // Aquí obtenemos TiempoVidaUtil
-                .Where(dv => dv.IdProductoNavigation.TiempoVidaUtil.HasValue) // Solo productos con Vida Útil
-                .SelectMany(dv => _context.SistemasRenovables
-                    .Where(s => s.IdCliente == dv.IdVentaNavigation.IdCliente)
-                    .Select(s => new
-                    {
-                        SistemaId = s.IdSistema,
-                        ClienteEmail = s.IdClienteNavigation.Email,
-                        ClienteNombre = s.IdClienteNavigation.Nombre,
-                        ProductoId = dv.IdProducto,
-                        ProductoNombre = dv.IdProductoNavigation.Nombre,
-                        TiempoVidaUtilAnios = dv.IdProductoNavigation.TiempoVidaUtil!.Value,
-                        // 🛑 USAMOS LA FECHA DE INSTALACIÓN DEL SISTEMA ASOCIADO
-                        FechaInstalacionSistema = s.FechaInstalacion
-                    })
-                )
-                .Distinct()
+            var diasAlertaVencimientoComponente = 90;
+            var fechaLimiteAlerta = fechaActual.AddDays(diasAlertaVencimientoComponente);
+
+            // Obtenemos todos los componentes instalados en sistemas con su tipo
+            var componentesConSistema = await _context.Componentes
+                .Include(c => c.TipoComponente)
+                .Include(c => c.Sistema)
+                    .ThenInclude(s => s.IdClienteNavigation)
+                .Where(c => c.FechaInstalacion.HasValue && c.TipoComponente != null)
                 .ToListAsync();
 
-            foreach (var item in productosVendidosConSistema)
+            foreach (var componente in componentesConSistema)
             {
-                // 🛑 Convertir DateOnly a DateTime para cálculo
-                var fechaInstalacionDateTime = new DateTime(item.FechaInstalacionSistema.Year, item.FechaInstalacionSistema.Month, item.FechaInstalacionSistema.Day);
+                var vidaUtilAnios = componente.TipoComponente.TiempoVida;
+                var fechaInstalacion = componente.FechaInstalacion.Value.Date;
+                var fechaVencimiento = fechaInstalacion.AddYears(vidaUtilAnios);
 
-                var fechaVencimientoEstimada = fechaInstalacionDateTime.AddYears(item.TiempoVidaUtilAnios).Date;
-
-                if (fechaVencimientoEstimada >= fechaActual && fechaVencimientoEstimada < fechaLimiteAlerta)
+                if (fechaVencimiento >= fechaActual && fechaVencimiento < fechaLimiteAlerta)
                 {
-                    // 1. **DECLARACIÓN** de los mensajes y asuntos
-                    var mensajeAlertaDB = $"¡ATENCIÓN! El producto '{item.ProductoNombre}' (asociado al Sistema ID: {item.SistemaId} instalado el {item.FechaInstalacionSistema.ToShortDateString()}) tiene una vida útil estimada que vence el **{fechaVencimientoEstimada.ToShortDateString()}** ({item.TiempoVidaUtilAnios} años). Comuníquese con Tecnoelectrica Industrial Andino S.A.C.";
+                    var cliente = componente.Sistema?.IdClienteNavigation;
+                    var sistema = componente.Sistema;
+                    var tipoComponente = componente.TipoComponente;
 
-                    var asuntoCorreo = $"🔔 Acción Requerida: El componente '{item.ProductoNombre}' está cerca de finalizar su vida útil";
+                    if (cliente == null || sistema == null)
+                        continue;
+
+                    // Mensaje para la BD
+                    var mensajeAlertaDB = $"¡ATENCIÓN! El componente '{tipoComponente.Descripcion}' (instalado en el sistema ID: {sistema.IdSistema} el {fechaInstalacion.ToShortDateString()}) tiene una vida útil que vence el **{fechaVencimiento.ToShortDateString()}** ({vidaUtilAnios} años). Comuníquese con Tecnoelectrica Industrial Andino S.A.C.";
+
+                    // Asunto y cuerpo del correo
+                    var asuntoCorreo = $"🔔 Acción Requerida: El componente '{tipoComponente.Descripcion}' está cerca de vencer";
                     var cuerpoCorreo = $@"
-                    Estimado/a **{item.ClienteNombre}**,
-                    Le informamos sobre la vida útil estimada de un componente clave en su **Sistema ID: {item.SistemaId}**:
+                    Estimado/a **{cliente.Nombre}**,
+
+                    Le informamos que uno de los componentes instalados en su sistema renovable está próximo a vencer:
+
                     <br>
-                    **Detalles del Vencimiento:**
+                    **Detalles del Componente:**
                     <br>
-                    * **Componente/Producto:** **{item.ProductoNombre}**
-                    * **Sistema Asociado:** ID {item.SistemaId}
-                    * **Fecha de Instalación Estimada:** {item.FechaInstalacionSistema.ToShortDateString()}
-                    * **Vida Útil Estimada:** {item.TiempoVidaUtilAnios} años
-                    * **Fecha Estimada de Vencimiento:** **{fechaVencimientoEstimada.ToShortDateString()}**
+                    * **Componente:** **{tipoComponente.Descripcion}**
+                    * **Sistema Asociado:** ID {sistema.IdSistema}
+                    * **Fecha de Instalación:** {fechaInstalacion.ToShortDateString()}
+                    * **Vida Útil:** {vidaUtilAnios} años
+                    * **Fecha Estimada de Vencimiento:** **{fechaVencimiento.ToShortDateString()}**
+
                     <br>
-                    Para mantener el óptimo rendimiento de su sistema y evitar interrupciones, le recomendamos planificar el reemplazo o evaluación del componente.
+                    Para evitar fallas o pérdidas de eficiencia, le recomendamos agendar una revisión o reemplazo del componente.
                     <br>
-                    **Comuníquese con nosotros para recibir una cotización o agendar una inspección técnica.**
+                    **Contáctenos para programar una inspección o cotización.**
+
                     <br>
                     Saludos cordiales,
                     <br>
                     Equipo de Tecnoelectrica Industrial Andino SAC.";
 
-                    // 2. Usamos 'mensajeAlertaDB' para buscar duplicados
-                    // NOTA: Para evitar duplicados en el mismo sistema/producto, incluimos el ID del producto en el mensaje.
-                    var alertaVencimientoExistente = await _context.Alertas
-                        .FirstOrDefaultAsync(a => a.IdSistema == item.SistemaId &&
-                                                 a.Tipo == "Vencimiento Producto" &&
-                                                 a.Mensaje == mensajeAlertaDB &&
-                                                 a.Estado == "Activa");
+                    // Verificar si ya existe una alerta
+                    var alertaExistente = await _context.Alertas
+                        .FirstOrDefaultAsync(a =>
+                            a.IdSistema == sistema.IdSistema &&
+                            a.Tipo == "Vencimiento Componente" &&
+                            a.Mensaje == mensajeAlertaDB &&
+                            a.Estado == "Activa");
 
-                    if (alertaVencimientoExistente == null)
+                    if (alertaExistente == null)
                     {
-                        var idSistemaAsociado = item.SistemaId;
-
-                        // 1. Crear la alerta (en la base de datos)
-                        var nuevaAlertaVencimiento = new Alerta
+                        var nuevaAlerta = new Alerta
                         {
-                            IdSistema = idSistemaAsociado,
-                            Tipo = "Vencimiento Producto",
+                            IdSistema = sistema.IdSistema,
+                            Tipo = "Vencimiento Componente",
                             Mensaje = mensajeAlertaDB,
                             Estado = "Activa",
                             FechaGeneracion = DateTime.Now
                         };
-                        _context.Alertas.Add(nuevaAlertaVencimiento);
-                        _logger.LogInformation($"Se agregó alerta de vencimiento para producto: '{item.ProductoNombre}' en Sistema ID: {item.SistemaId}.");
 
-                        // 2. Enviar correo
-                        if (!string.IsNullOrEmpty(item.ClienteEmail))
+                        _context.Alertas.Add(nuevaAlerta);
+                        _logger.LogInformation($"✅ Alerta generada para componente: '{tipoComponente.Descripcion}' en sistema ID: {sistema.IdSistema}");
+
+                        if (!string.IsNullOrEmpty(cliente.Email))
                         {
-                            await EnviarCorreoElectronico(item.ClienteEmail!, asuntoCorreo, cuerpoCorreo);
-                            _logger.LogInformation($"Correo de VENCIMIENTO de Producto enviado a: {item.ClienteEmail}");
+                            await EnviarCorreoElectronico(cliente.Email, asuntoCorreo, cuerpoCorreo);
+                            _logger.LogInformation($"📧 Correo de vencimiento enviado a: {cliente.Email}");
                         }
                     }
                 }
             }
 
             // --------------------------------------------------------------------------------
-            // LÓGICA 3: CORREO DE RECORDATORIO A 14 DÍAS 
+            // LÓGICA 3: ALERTA DE MANTENIMIENTO PERIÓDICO DE COMPONENTES
+            // --------------------------------------------------------------------------------
+
+            _logger.LogInformation("Verificando frecuencia de mantenimiento de componentes instalados...");
+
+            // Obtenemos nuevamente los componentes instalados con su sistema y tipo
+            var componentesMantenimiento = await _context.Componentes
+                .Include(c => c.TipoComponente)
+                .Include(c => c.Sistema)
+                    .ThenInclude(s => s.IdClienteNavigation)
+                .Where(c => c.FechaInstalacion.HasValue && c.TipoComponente != null && c.Sistema != null)
+                .ToListAsync();
+
+            foreach (var componente in componentesMantenimiento)
+            {
+                var frecuenciaMes = componente.TipoComponente.FrecuenciaMantenimientoMes;
+                if (!frecuenciaMes.HasValue || frecuenciaMes.Value <= 0)
+                    continue; // No requiere mantenimiento periódico
+
+                var cliente = componente.Sistema.IdClienteNavigation;
+                var sistema = componente.Sistema;
+                var tipoComponente = componente.TipoComponente;
+
+                var fechaBase = componente.UltimoFechaMantenimiento ?? componente.FechaInstalacion;
+                if (!fechaBase.HasValue)
+                    continue;
+
+                var fechaProximoMantenimiento = fechaBase.Value.AddMonths((int)frecuenciaMes.Value);
+
+                if (fechaProximoMantenimiento.Date >= fechaActual && fechaProximoMantenimiento.Date <= fechaActual.AddDays(15)) // Alerta si falta <=15 días
+                {
+                    var mensajeAlertaDB = $"Recordatorio: El componente '{tipoComponente.Descripcion}' instalado en el sistema ID {sistema.IdSistema} requiere mantenimiento según su frecuencia ({frecuenciaMes.Value / 12:0.#} veces por año). Fecha estimada: {fechaProximoMantenimiento:dd/MM/yyyy}.";
+
+                    // Evitar duplicados
+                    var alertaExistente = await _context.Alertas.FirstOrDefaultAsync(a =>
+                        a.IdSistema == sistema.IdSistema &&
+                        a.Tipo == "Mantenimiento Componente" &&
+                        a.Mensaje == mensajeAlertaDB &&
+                        a.Estado == "Activa");
+
+                    if (alertaExistente == null)
+                    {
+                        var nuevaAlerta = new Alerta
+                        {
+                            IdSistema = sistema.IdSistema,
+                            Tipo = "Mantenimiento Componente",
+                            Mensaje = mensajeAlertaDB,
+                            Estado = "Activa",
+                            FechaGeneracion = DateTime.Now
+                        };
+
+                        _context.Alertas.Add(nuevaAlerta);
+                        _logger.LogInformation($"🔧 Alerta generada para mantenimiento de componente: '{tipoComponente.Descripcion}' (sistema ID: {sistema.IdSistema})");
+
+                        if (!string.IsNullOrEmpty(cliente?.Email))
+                        {
+                            var asuntoCorreo = $"🔧 Mantenimiento requerido para el componente '{tipoComponente.Descripcion}'";
+                            var cuerpoCorreo = $@"
+                            Estimado/a **{cliente.Nombre}**,
+
+                            De acuerdo con el cronograma de mantenimiento, su componente **{tipoComponente.Descripcion}** instalado en el sistema ID **{sistema.IdSistema}** requiere mantenimiento técnico preventivo.
+
+                            <br>
+                            **Detalles del Componente:**
+                            <br>
+                            * **Fecha de última revisión o instalación:** {fechaBase.Value.ToShortDateString()}
+                            * **Frecuencia de mantenimiento:** cada {frecuenciaMes.Value / 12:0.#} año(s)
+                            * **Próximo mantenimiento estimado:** **{fechaProximoMantenimiento.ToShortDateString()}**
+
+                            <br>
+                            Para garantizar un funcionamiento óptimo de su sistema, le recomendamos agendar el mantenimiento a la brevedad.
+
+                            <br>
+                            Saludos cordiales,
+                            <br>
+                            Equipo de Tecnoelectrica Industrial Andino SAC.";
+
+                            await EnviarCorreoElectronico(cliente.Email, asuntoCorreo, cuerpoCorreo);
+                            _logger.LogInformation($"📧 Correo de mantenimiento periódico enviado a: {cliente.Email}");
+                        }
+                    }
+                }
+            }
+
+
+
+            // --------------------------------------------------------------------------------
+            // LÓGICA 4: CORREO DE RECORDATORIO A 14 DÍAS 
             // --------------------------------------------------------------------------------
 
             var mantenimientosParaCorreo = await _context.Mantenimientos

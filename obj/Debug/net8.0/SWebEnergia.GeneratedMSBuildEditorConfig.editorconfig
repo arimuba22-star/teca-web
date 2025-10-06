@@ -17,197 +17,197 @@ build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = SWebEnergia
 build_property.RootNamespace = SWebEnergia
-build_property.ProjectDir = C:\Users\Niccole Muedas\Desktop\trabajo tesis\SWebEnergia\SWebEnergia\
+build_property.ProjectDir = C:\teca-web\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Users\Niccole Muedas\Desktop\trabajo tesis\SWebEnergia\SWebEnergia
+build_property.MSBuildProjectDirectory = C:\teca-web
 build_property._RazorSourceGeneratorDebug = 
 build_property.EffectiveAnalysisLevelStyle = 8.0
 build_property.EnableCodeStyleSeverity = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/Account/ChangePassword.cshtml]
+[C:/teca-web/Views/Account/ChangePassword.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxDaGFuZ2VQYXNzd29yZC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/Account/ForgotPassword.cshtml]
+[C:/teca-web/Views/Account/ForgotPassword.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxGb3Jnb3RQYXNzd29yZC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/Account/Login.cshtml]
+[C:/teca-web/Views/Account/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxMb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/Account/ResetPassword.cshtml]
+[C:/teca-web/Views/Account/ResetPassword.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxSZXNldFBhc3N3b3JkLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/CalendarioAlertas/Index.cshtml]
+[C:/teca-web/Views/CalendarioAlertas/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2FsZW5kYXJpb0FsZXJ0YXNcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/Clientes/Create.cshtml]
+[C:/teca-web/Views/Clientes/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2xpZW50ZXNcQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/Clientes/Delete.cshtml]
+[C:/teca-web/Views/Clientes/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2xpZW50ZXNcRGVsZXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/Clientes/Details.cshtml]
+[C:/teca-web/Views/Clientes/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2xpZW50ZXNcRGV0YWlscy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/Clientes/Edit.cshtml]
+[C:/teca-web/Views/Clientes/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2xpZW50ZXNcRWRpdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/Clientes/Index.cshtml]
+[C:/teca-web/Views/Clientes/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2xpZW50ZXNcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/DetalleVenta/Create.cshtml]
+[C:/teca-web/Views/DetalleVenta/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGV0YWxsZVZlbnRhXENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/Home/Index.cshtml]
+[C:/teca-web/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/Home/Privacy.cshtml]
+[C:/teca-web/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/Mantenimientos/Create.cshtml]
+[C:/teca-web/Views/Mantenimientos/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFudGVuaW1pZW50b3NcQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/Mantenimientos/Delete.cshtml]
+[C:/teca-web/Views/Mantenimientos/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFudGVuaW1pZW50b3NcRGVsZXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/Mantenimientos/Details.cshtml]
+[C:/teca-web/Views/Mantenimientos/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFudGVuaW1pZW50b3NcRGV0YWlscy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/Mantenimientos/DetallesComprobante.cshtml]
+[C:/teca-web/Views/Mantenimientos/DetallesComprobante.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFudGVuaW1pZW50b3NcRGV0YWxsZXNDb21wcm9iYW50ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/Mantenimientos/Edit.cshtml]
+[C:/teca-web/Views/Mantenimientos/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFudGVuaW1pZW50b3NcRWRpdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/Mantenimientos/Index.cshtml]
+[C:/teca-web/Views/Mantenimientos/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFudGVuaW1pZW50b3NcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/Productos/Create.cshtml]
+[C:/teca-web/Views/Productos/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdG9zXENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/Productos/Delete.cshtml]
+[C:/teca-web/Views/Productos/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdG9zXERlbGV0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/Productos/Details.cshtml]
+[C:/teca-web/Views/Productos/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdG9zXERldGFpbHMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/Productos/Edit.cshtml]
+[C:/teca-web/Views/Productos/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdG9zXEVkaXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/Productos/Index.cshtml]
+[C:/teca-web/Views/Productos/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdG9zXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/Reportes/Index.cshtml]
+[C:/teca-web/Views/Reportes/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0ZXNcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/Shared/Error.cshtml]
+[C:/teca-web/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/Shared/_ValidationScriptsPartial.cshtml]
+[C:/teca-web/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/SistemasRenovables/Create.cshtml]
+[C:/teca-web/Views/SistemasRenovables/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2lzdGVtYXNSZW5vdmFibGVzXENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/SistemasRenovables/Delete.cshtml]
+[C:/teca-web/Views/SistemasRenovables/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2lzdGVtYXNSZW5vdmFibGVzXERlbGV0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/SistemasRenovables/Details.cshtml]
+[C:/teca-web/Views/SistemasRenovables/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2lzdGVtYXNSZW5vdmFibGVzXERldGFpbHMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/SistemasRenovables/Edit.cshtml]
+[C:/teca-web/Views/SistemasRenovables/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2lzdGVtYXNSZW5vdmFibGVzXEVkaXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/SistemasRenovables/Index.cshtml]
+[C:/teca-web/Views/SistemasRenovables/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2lzdGVtYXNSZW5vdmFibGVzXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/Usuarios/Create.cshtml]
+[C:/teca-web/Views/Usuarios/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXN1YXJpb3NcQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/Usuarios/Delete.cshtml]
+[C:/teca-web/Views/Usuarios/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXN1YXJpb3NcRGVsZXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/Usuarios/Details.cshtml]
+[C:/teca-web/Views/Usuarios/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXN1YXJpb3NcRGV0YWlscy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/Usuarios/Edit.cshtml]
+[C:/teca-web/Views/Usuarios/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXN1YXJpb3NcRWRpdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/Usuarios/Index.cshtml]
+[C:/teca-web/Views/Usuarios/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXN1YXJpb3NcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/Ventas/Create.cshtml]
+[C:/teca-web/Views/Ventas/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVmVudGFzXENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/Ventas/Delete.cshtml]
+[C:/teca-web/Views/Ventas/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVmVudGFzXERlbGV0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/Ventas/Details.cshtml]
+[C:/teca-web/Views/Ventas/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVmVudGFzXERldGFpbHMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/Ventas/Edit.cshtml]
+[C:/teca-web/Views/Ventas/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVmVudGFzXEVkaXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/Ventas/Index.cshtml]
+[C:/teca-web/Views/Ventas/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVmVudGFzXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/Ventas/VentaPdf.cshtml]
+[C:/teca-web/Views/Ventas/VentaPdf.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVmVudGFzXFZlbnRhUGRmLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/_ViewImports.cshtml]
+[C:/teca-web/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/_ViewStart.cshtml]
+[C:/teca-web/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Niccole Muedas/Desktop/trabajo tesis/SWebEnergia/SWebEnergia/Views/Shared/_Layout.cshtml]
+[C:/teca-web/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-vmczc48qv1

@@ -9771,23 +9771,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Niccole Muedas\\.nuget\\packages\\": {},
+    "C:\\Users\\ryzen 75700G\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Niccole Muedas\\Desktop\\trabajo tesis\\SWebEnergia\\SWebEnergia\\SWebEnergia.csproj",
+      "projectUniqueName": "C:\\teca-web\\SWebEnergia.csproj",
       "projectName": "SWebEnergia",
-      "projectPath": "C:\\Users\\Niccole Muedas\\Desktop\\trabajo tesis\\SWebEnergia\\SWebEnergia\\SWebEnergia.csproj",
-      "packagesPath": "C:\\Users\\Niccole Muedas\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Niccole Muedas\\Desktop\\trabajo tesis\\SWebEnergia\\SWebEnergia\\obj\\",
+      "projectPath": "C:\\teca-web\\SWebEnergia.csproj",
+      "packagesPath": "C:\\Users\\ryzen 75700G\\.nuget\\packages\\",
+      "outputPath": "C:\\teca-web\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\Niccole Muedas\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\ryzen 75700G\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -9796,6 +9796,7 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
