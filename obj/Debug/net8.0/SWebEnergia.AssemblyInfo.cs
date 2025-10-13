@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SWebEnergia")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4229ed55ff47e26bab1e481637336c1316d27a59")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0208a2b36885187c7fbce332a0c5ffce21571d6c")]
 [assembly: System.Reflection.AssemblyProductAttribute("SWebEnergia")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SWebEnergia")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

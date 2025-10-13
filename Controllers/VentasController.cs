@@ -1,18 +1,20 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using SWebEnergia.Models;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using iText.Commons.Actions.Contexts;
+using iText.IO.Font.Constants;
+using iText.Kernel.Font;
 using iText.Kernel.Pdf;
 using iText.Layout;
 using iText.Layout.Element;
-using iText.Kernel.Font;
-using iText.IO.Font.Constants;
 using iText.Layout.Properties;
-using System.IO;
-using Newtonsoft.Json;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using SWebEnergia.Models;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SWebEnergia.Controllers
 {
@@ -194,14 +196,14 @@ namespace SWebEnergia.Controllers
             {
                 document.ShowTextAligned(new Paragraph($"{detalle.Cantidad}"), 400, yTable2, TextAlignment.LEFT);
                 document.ShowTextAligned(new Paragraph($"{detalle.IdProductoNavigation?.Nombre}"), 80, yTable2, TextAlignment.LEFT);
-                document.ShowTextAligned(new Paragraph($"{detalle.PrecioUnitario}"), 315, yTable2, TextAlignment.LEFT);
-                document.ShowTextAligned(new Paragraph($"{(detalle.Cantidad * detalle.PrecioUnitario)}"), 470, yTable2, TextAlignment.LEFT);
+                document.ShowTextAligned(new Paragraph($"s/ {detalle.PrecioUnitario}"), 315, yTable2, TextAlignment.LEFT);
+                document.ShowTextAligned(new Paragraph($"s/ {(detalle.Cantidad * detalle.PrecioUnitario)}"), 470, yTable2, TextAlignment.LEFT);
                 yTable2 -= 15;
             }
 
-            document.ShowTextAligned(new Paragraph($"{venta.Subtotal}"), 405, 318, TextAlignment.LEFT);
-            document.ShowTextAligned(new Paragraph($"{venta.Impuestos}"), 405, 288, TextAlignment.LEFT);
-            document.ShowTextAligned(new Paragraph($"{venta.Total}"), 405, 252, TextAlignment.LEFT);
+            document.ShowTextAligned(new Paragraph($"s/ {venta.Subtotal}"), 405, 350, TextAlignment.LEFT);
+            document.ShowTextAligned(new Paragraph($"s/ {venta.Impuestos} (18%)"), 405, 321, TextAlignment.LEFT);
+            document.ShowTextAligned(new Paragraph($"s/ {venta.Total}"), 405, 283, TextAlignment.LEFT);
 
             document.Close();
             var pdfBytes = msOutput.ToArray();
@@ -209,6 +211,7 @@ namespace SWebEnergia.Controllers
         }
 
         // ⚠️ Método para la VISTA PREVIA del PDF (no fuerza la descarga)
+
         public async Task<IActionResult> VistaPreviaPdf(int id)
         {
             var venta = await _context.Ventas
@@ -218,6 +221,9 @@ namespace SWebEnergia.Controllers
                 .FirstOrDefaultAsync(v => v.IdVenta == id);
 
             if (venta == null) return NotFound();
+
+            // 1. Definir la cultura peruana para el formato (S/.)
+            var culture = new CultureInfo("es-PE");
 
             string plantillaPath;
             bool esFactura = venta.IdClienteNavigation?.NDocumento?.Length == 11;
@@ -246,7 +252,6 @@ namespace SWebEnergia.Controllers
             document.SetFont(font);
 
             // Mostrar tipo y número
-            // Mostrar tipo y número
             var boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
 
             string tipoDocumento2 = esFactura ? "FACTURA" : "BOLETA";
@@ -256,7 +261,7 @@ namespace SWebEnergia.Controllers
             document.ShowTextAligned(
                 new Paragraph($"{numero2}")
                     .SetFont(boldFont)
-                    .SetFontSize(13), // <-- ¡Aquí está la corrección!
+                    .SetFontSize(13),
                 500, 790, TextAlignment.LEFT);
 
 
@@ -270,16 +275,34 @@ namespace SWebEnergia.Controllers
             float yTable2 = 516;
             foreach (var detalle in venta.DetalleVenta)
             {
-                document.ShowTextAligned(new Paragraph($"{detalle.Cantidad}"), 400, yTable2, TextAlignment.LEFT);
+                // Cantidad: Formato N2 (2 decimales, sin símbolo S/.)
+                document.ShowTextAligned(new Paragraph($"{detalle.Cantidad:N2}"), 400, yTable2, TextAlignment.LEFT);
+
                 document.ShowTextAligned(new Paragraph($"{detalle.IdProductoNavigation?.Nombre}"), 80, yTable2, TextAlignment.LEFT);
-                document.ShowTextAligned(new Paragraph($"{detalle.PrecioUnitario}"), 315, yTable2, TextAlignment.LEFT);
-                document.ShowTextAligned(new Paragraph($"{(detalle.Cantidad * detalle.PrecioUnitario)}"), 470, yTable2, TextAlignment.LEFT);
+
+                // Precio Unitario: Usamos ToString("C", culture) para S/. y 2 decimales
+                var precioUnitarioFormatted = detalle.PrecioUnitario.ToString("C", culture);
+                document.ShowTextAligned(new Paragraph($"{precioUnitarioFormatted}"), 315, yTable2, TextAlignment.LEFT);
+
+                // Total por Detalle: Aplicamos ToString("C", culture) al cálculo. Esto quita los 4 decimales.
+                var importe = detalle.Cantidad * detalle.PrecioUnitario;
+                var importeFormatted = importe.ToString("C", culture);
+                document.ShowTextAligned(new Paragraph($"{importeFormatted}"), 470, yTable2, TextAlignment.LEFT);
+
                 yTable2 -= 15;
             }
 
-            document.ShowTextAligned(new Paragraph($"{venta.Subtotal}"), 405, 350, TextAlignment.LEFT);
-            document.ShowTextAligned(new Paragraph($"{venta.Impuestos}"), 405, 321, TextAlignment.LEFT);
-            document.ShowTextAligned(new Paragraph($"{venta.Total}"), 405, 283, TextAlignment.LEFT);
+            // Totales: Usamos ToString("C", culture) para asegurar S/ y 2 decimales
+            var subtotalFormatted = (venta.Subtotal ?? 0m).ToString("C", culture);
+            var impuestosFormatted = (venta.Impuestos ?? 0m).ToString("C", culture);
+            var totalFormatted = (venta.Total ?? 0m).ToString("C", culture);
+
+            document.ShowTextAligned(new Paragraph($"{subtotalFormatted}"), 405, 350, TextAlignment.LEFT);
+
+            // Impuestos: Combinamos el formato S/. y 2 decimales con el texto (18%)
+            document.ShowTextAligned(new Paragraph($"{impuestosFormatted} (18%)"), 405, 321, TextAlignment.LEFT);
+
+            document.ShowTextAligned(new Paragraph($"{totalFormatted}"), 405, 283, TextAlignment.LEFT);
 
             document.Close();
             var pdfBytes = msOutput.ToArray();

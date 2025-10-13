@@ -247,7 +247,7 @@ namespace SWebEnergia.Controllers
                         100, yPosition, TextAlignment.RIGHT);
                     document.ShowTextAligned(new Paragraph($"{detalle.Concepto}"),
                         150, yPosition, TextAlignment.LEFT);
-                    document.ShowTextAligned(new Paragraph($"{detalle.PrecioUnitario:N2}"),
+                    document.ShowTextAligned(new Paragraph($"s/ {detalle.PrecioUnitario:N2}"),
                         300, yPosition, TextAlignment.RIGHT);
                     document.ShowTextAligned(new Paragraph($"{detalle.Importe:N2}"),
                         400, yPosition, TextAlignment.RIGHT);
@@ -257,13 +257,13 @@ namespace SWebEnergia.Controllers
             }
 
             // Montos
-            document.ShowTextAligned(new Paragraph($"{comprobante.Subtotal:N2}"),
+            document.ShowTextAligned(new Paragraph($"s/ {comprobante.Subtotal:N2}"),
                 subtotalX, subtotalY, TextAlignment.LEFT);
 
-            document.ShowTextAligned(new Paragraph($"{comprobante.Impuestos:N2}"),
+            document.ShowTextAligned(new Paragraph($"s/ {comprobante.Impuestos:N2} (18%)"),
                 impuestosX, impuestosY, TextAlignment.LEFT);
 
-            document.ShowTextAligned(new Paragraph($"{comprobante.Total:N2}"),
+            document.ShowTextAligned(new Paragraph($"s/ {comprobante.Total:N2}"),
                 totalX, totalY, TextAlignment.LEFT);
 
             document.Close();

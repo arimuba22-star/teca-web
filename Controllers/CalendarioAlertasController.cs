@@ -342,30 +342,67 @@ namespace SWebEnergia.Controllers
 
                         if (!string.IsNullOrEmpty(cliente?.Email))
                         {
-                            var asuntoCorreo = $"🔧 Mantenimiento requerido para el componente '{tipoComponente.Descripcion}'";
+                            // Asunto: Más directo, enfocando la necesidad de agendar y el componente.
+                            var asuntoCorreo = $"🛠️ Recordatorio: Agende el mantenimiento preventivo de su {tipoComponente.Descripcion}";
+
                             var cuerpoCorreo = $@"
-                            Estimado/a **{cliente.Nombre}**,
+                            <!DOCTYPE html>
+                            <html>
+                            <body>
+                                <p>Estimado/a <strong>{cliente.Nombre}</strong>:</p>
 
-                            De acuerdo con el cronograma de mantenimiento, su componente **{tipoComponente.Descripcion}** instalado en el sistema ID **{sistema.IdSistema}** requiere mantenimiento técnico preventivo.
+                                <p>Le escribimos para recordarle que, de acuerdo con el programa de servicio, su componente <strong>{tipoComponente.Descripcion}</strong>, instalado en el sistema ID <strong>{sistema.IdSistema}</strong>, requiere su próximo mantenimiento técnico preventivo.</p>
 
-                            <br>
-                            **Detalles del Componente:**
-                            <br>
-                            * **Fecha de última revisión o instalación:** {fechaBase.Value.ToShortDateString()}
-                            * **Frecuencia de mantenimiento:** cada {frecuenciaMes.Value / 12:0.#} año(s)
-                            * **Próximo mantenimiento estimado:** **{fechaProximoMantenimiento.ToShortDateString()}**
+                                <hr style='border: none; border-top: 1px solid #ddd; margin: 15px 0;'>
 
-                            <br>
-                            Para garantizar un funcionamiento óptimo de su sistema, le recomendamos agendar el mantenimiento a la brevedad.
+                                <p><strong>Detalles clave del mantenimiento:</strong></p>
+                                <ul style='list-style-type: none; padding-left: 0;'>
+                                    <li><strong>Última Revisión/Instalación:</strong> {fechaBase.Value:dd/MM/yyyy}</li>
+                                    <li><strong>Frecuencia de Mantenimiento:</strong> Cada {frecuenciaMes.Value / 12:0.#} año(s)</li>
+                                    <li><strong>Fecha Estimada del Próximo Mantenimiento:</strong> <strong>{fechaProximoMantenimiento:dd/MM/yyyy}</strong></li>
+                                </ul>
+        
+                                <p>Para garantizar el rendimiento óptimo y la vida útil de su sistema, le solicitamos **agendar su servicio a la brevedad**.</p>
+        
+                                <p>Por favor, contáctenos para confirmar la fecha de la visita técnica.</p>
 
-                            <br>
-                            Saludos cordiales,
-                            <br>
-                            Equipo de Tecnoelectrica Industrial Andino SAC.";
+                                <p>
+                                    Saludos cordiales,<br>
+                                    <br>
+                                    <strong>Equipo de Tecnoelectrica Industrial Andino SAC</strong>
+                                </p>
+                            </body>
+                            </html>";
 
                             await EnviarCorreoElectronico(cliente.Email, asuntoCorreo, cuerpoCorreo);
                             _logger.LogInformation($"📧 Correo de mantenimiento periódico enviado a: {cliente.Email}");
                         }
+                        //if (!string.IsNullOrEmpty(cliente?.Email))
+                        //{
+                        //    var asuntoCorreo = $"🔧 Mantenimiento requerido para el componente '{tipoComponente.Descripcion}'";
+                        //    var cuerpoCorreo = $@"
+                        //    Estimado/a **{cliente.Nombre}**,
+
+                        //    De acuerdo con el cronograma de mantenimiento, su componente **{tipoComponente.Descripcion}** instalado en el sistema ID **{sistema.IdSistema}** requiere mantenimiento técnico preventivo.
+
+                        //    <br>
+                        //    **Detalles del Componente:**
+                        //    <br>
+                        //    * **Fecha de última revisión o instalación:** {fechaBase.Value.ToShortDateString()}
+                        //    * **Frecuencia de mantenimiento:** cada {frecuenciaMes.Value / 12:0.#} año(s)
+                        //    * **Próximo mantenimiento estimado:** **{fechaProximoMantenimiento.ToShortDateString()}**
+
+                        //    <br>
+                        //    Para garantizar un funcionamiento óptimo de su sistema, le recomendamos agendar el mantenimiento a la brevedad.
+
+                        //    <br>
+                        //    Saludos cordiales,
+                        //    <br>
+                        //    Equipo de Tecnoelectrica Industrial Andino SAC.";
+
+                        //    await EnviarCorreoElectronico(cliente.Email, asuntoCorreo, cuerpoCorreo);
+                        //    _logger.LogInformation($"📧 Correo de mantenimiento periódico enviado a: {cliente.Email}");
+                        //}
                     }
                 }
             }

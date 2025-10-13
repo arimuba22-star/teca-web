@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SWebEnergia.Models;
 using Rotativa.AspNetCore;
+using System.Globalization; // Asegúrate de tener este using
+using Microsoft.AspNetCore.Localization; // Asegúrate de tener este using
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +26,7 @@ builder.Services.AddSession(options =>
 builder.Services.AddHostedService<SWebEnergia.Services.AlertasBackgroundService>();
 // 👇 Registrar el servicio de correo electrónico
 builder.Services.AddTransient<SWebEnergia.Services.EmailService>();
+
 var app = builder.Build();
 
 // Crear la base de datos y tablas si no existen
@@ -32,6 +35,20 @@ using (var scope = app.Services.CreateScope())
     var context = scope.ServiceProvider.GetRequiredService<EnergiaContext>();
     context.Database.EnsureCreated();
 }
+
+// ----------------------------------------------------------------------
+// ✅ SOLUCIÓN PARA EL SÍMBOLO DE MONEDA (S/.) EN AMBIENTES DE HOSTING
+// ----------------------------------------------------------------------
+
+var defaultCulture = new CultureInfo("es-PE");
+var localizationOptions = new RequestLocalizationOptions
+{
+    // Establece la cultura predeterminada para el formato de números, fechas y monedas
+    DefaultRequestCulture = new RequestCulture(defaultCulture),
+    // Soporta explícitamente solo la cultura peruana para esta aplicación
+    SupportedCultures = new List<CultureInfo> { defaultCulture },
+    SupportedUICultures = new List<CultureInfo> { defaultCulture }
+};
 
 // Middleware
 if (!app.Environment.IsDevelopment())
@@ -42,6 +59,10 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+// 👇 APLICA LA CONFIGURACIÓN DE CULTURA ANTES DE USE ROUTING
+app.UseRequestLocalization(localizationOptions);
+
 app.UseRouting();
 app.UseSession();
 app.UseAuthorization();
